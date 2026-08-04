@@ -1,7 +1,7 @@
-from .views import get_movie, movie_click, move_rating, watch_session
+from .views import MovieView, movie_click, movie_rating, watch_session
 from django.urls import path
-urlpatterns = [path('', get_movie), 
+urlpatterns = [path('', MovieView.as_view()), 
                path('click', movie_click), 
-               path('rate', move_rating),
+               path('rate', movie_rating),
                path('watch', watch_session)
                ]
