@@ -24,7 +24,7 @@ class MovieModel(models.Model):
     movie_description = models.TextField()
     movie_video_url = models.URLField()
 
-    # You can later replace this with an Actor model if needed
+    
     movie_cast = models.JSONField(default=list)
 
     movie_duration = models.FloatField(default=0)
