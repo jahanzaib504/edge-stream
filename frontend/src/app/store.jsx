@@ -1,16 +1,18 @@
 import { create } from "zustand";
-import { get_trending_movie, get_movies, get_movie } from "../services/movieService";
+import { get_recommendations, get_movie } from "../services/movieService";
 import { get_user } from "../services/authService";
+import { recommendations } from "../mocks/recommendations";
 
-const useTrendingMovie = create((set) => ({
-  movie: null,
+const useRecommendations = create((set) => ({
+  recommendations: null,
   loading: false,
   error: null,
-  fetchMovie: async () => {
+  fetchRecommendations: async () => {
     set({ loading: true, error: null }); // Reset error state on new request
     try {
-      const data = await get_trending_movie();
-      set({ movie: data });
+      const data = await get_recommendations();
+      console.log(data)
+      set({ recommendations: data });
     } catch (e) {
       set({ error: e?.message || "Failed to fetch trending movie" });
     } finally {
@@ -18,23 +20,6 @@ const useTrendingMovie = create((set) => ({
     }
   },
 }));
-const useMovies = create((set) => ({
-  movies: null,
-  loading: false,
-  error: null,
-  fetchMovie: async () => {
-    set({ loading: true, error: null }); // Reset error state on new request
-    try {
-      const data = await get_movies([]);
-      set({ movies: data });
-    } catch (e) {
-      set({ error: e?.message || "Failed to fetch trending movie" });
-    } finally {
-      set({ loading: false });
-    }
-  },
-}));
-
 
 const useMovie = create((set) => ({
   movie: null,
@@ -59,7 +44,7 @@ const useProfile = create((set)=>({
   fetchUser: async ()=>{
     set({loading:true});
     try{
-      const data = await get_user()
+      const data = await get_user();
       set({user:data});
     }catch(e){
       set({ error: e?.message || "Failed to fetch user" });
@@ -70,4 +55,4 @@ const useProfile = create((set)=>({
   }
 }))
 
-export { useTrendingMovie, useMovies, useMovie, useProfile};
+export { useRecommendations, useMovie, useProfile};

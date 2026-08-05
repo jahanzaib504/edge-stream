@@ -1,58 +1,89 @@
 import { useEffect, useRef } from "react";
-import SideBar from "../components/sidebar"
-import { useTrendingMovie, useMovies } from "../app/store";
+import { useNavigate } from "react-router";
+import { useRecommendations } from "../app/store";
+
 const Header = () => {
-    const poster_url = useTrendingMovie((state) => state.movie?.poster_url);
-    const description = useTrendingMovie((state) => state.movie?.description);
-    const genres = useTrendingMovie((state) => state.movie?.genres);
-    const fetchMovie = useTrendingMovie((state) => state?.fetchMovie)
-    const loading = useTrendingMovie((state) => state.loading)
-    useEffect(() => {
-        fetchMovie()
-    }, [fetchMovie])
+    const recommendations = useRecommendations((state) => state.recommendations);
+    const navigate = useNavigate();
+
+    const hitMost = recommendations?.hitmost;
+
     return (
         <header>
-            {/* Trending movie */}
-            <div className="relative mt-4 mr-4 h-95 rounded-lg bg-red-400 z-20 bg-cover bg-center shadow-red-300 shadow-inner" style={{ backgroundImage: `url(${(poster_url) ? poster_url : ""})` }}>
-                {/* Description */}
-                <div className="absolute text-white text-lg top-[50%] left-2 w-100 h-100 overflow-clip">{description}</div>
-                {/* Genres */}
+            <div
+                onClick={() => navigate(`/movie/${hitMost?.movie_id}`)}
+                className="relative mt-4 mr-4 h-95 rounded-lg bg-red-400 z-20 bg-cover bg-center shadow-red-300 shadow-inner cursor-pointer"
+                style={{ backgroundImage: `url(${hitMost?.poster_url ?? ""})` }}
+            >
                 <div className="absolute bottom-4 flex gap-4">
-                    {genres && genres.map((value, index) => (
-                        <div className="text-white text-lg" key={index}>{value}</div>
-                    )
-                    )}
+                    {hitMost?.genres?.map((genre) => (
+                        <span className="text-white text-lg" key={genre}>
+                            {genre}
+                        </span>
+                    ))}
                 </div>
             </div>
         </header>
-    )
-}
+    );
+};
+
+const MovieRow = ({ title, items, onNavigate }) => {
+    if (!items?.length) return null;
+
+    return (
+        <>
+            <h2 className="mt-3 text-xl font-bold">{title}</h2>
+            <div className="flex gap-5 mt-2">
+                {items.map(({ poster_url, movie_id, title: movieTitle }) => (
+                    <img
+                        key={movie_id}
+                        src={poster_url ?? ""}
+                        alt={movieTitle ?? "Movie poster"}
+                        className="w-28 h-40 object-cover rounded cursor-pointer"
+                        onClick={() => onNavigate(movie_id)}
+                    />
+                ))}
+            </div>
+        </>
+    );
+};
+
 const Main = () => {
-    const movies = useMovies((state) => state.movies);
-    const fetchMovie = useMovies((state) => state?.fetchMovie)
-    const loading = useMovies((state) => state.loading)
-    const wrapper = useRef()
-    useEffect(()=>{
-        fetchMovie()
-    }, [fetchMovie])
-    return (<>
-        <h2 className="mt-3 text-xl font-bold">Top Recommendations</h2>
-        <div className="flex gap-5 mt-2">
-            {movies && movies.map((movie)=>(
-                <div className="" key={movie.id}>
-                    <img src={movie?.poster_url} style={{width: "200px", height:"200px"}}/>
-                </div>
-            ))}
-            {/* For pagination */}
-            <div ref={wrapper}></div>
-        </div>
-    </>)
-}
+    const recommendations = useRecommendations((state) => state.recommendations);
+    const loading = useRecommendations((state) => state.loading);
+    const wrapperRef = useRef(null);
+    const navigate = useNavigate();
+
+    const handleNavigate = (movie_id) => navigate(`/movie/${movie_id}`);
+
+    if (loading) {
+        return <p className="mt-5 text-center">Loading recommendations...</p>;
+    }
+
+    return (
+        <>
+            <MovieRow title="Trending" items={recommendations?.trending} onNavigate={handleNavigate} />
+            <MovieRow title="Featured" items={recommendations?.featured} onNavigate={handleNavigate} />
+            <MovieRow title="For You" items={recommendations?.foryou} onNavigate={handleNavigate} />
+            <div ref={wrapperRef} />
+        </>
+    );
+};
+
 const HomePage = () => {
-    return <>
+    const fetchRecommendations = useRecommendations((state) => state.fetchRecommendations);
+
+    useEffect(() => {
+        fetchRecommendations();
+    }, [fetchRecommendations]);
+
+    return (
+        <div>
             <Header />
             <Main />
-            <div className="mt-5"></div>
-        </>
-}
-export default HomePage
+            <div className="mt-5" />
+        </div>
+    );
+};
+
+export default HomePage;

@@ -2,6 +2,12 @@ import { HomeIcon, VideoIcon, User2Icon, SearchIcon } from "lucide-react"
 import { Link } from "react-router"
 import { useProfile } from "../app/store"
 import { useEffect, useRef, useState } from "react"
+const SearchMenu = () => {
+    return (
+        <div className="fixed top-7 left-[50%] translate-x-[-50%] bg-gray-900 rounded-4xl w-100">
+            <input className="text-xl px-5 py-3 text-white placeholder:text-gray-700 outline-none w-full" placeholder="Search" />
+        </div>)
+}
 const Button = ({ icon }) => (
     <div className="
         flex
@@ -30,23 +36,23 @@ const ProfileMenu = () => {
     }, [])
     return (
         <div className="
-absolute
-bottom-14
-left-0
-w-72
-rounded-2xl
-border
-border-zinc-800
-bg-zinc-900
-shadow-2xl
-z-50
-overflow-hidden
-animate-in
-fade-in
-slide-in-from-bottom-2
-duration-200
-text-white
-">
+                        absolute
+                        bottom-14
+                        left-0
+                        w-72
+                        rounded-2xl
+                        border
+                        border-zinc-800
+                        bg-zinc-900
+                        shadow-2xl
+                        z-50
+                        overflow-hidden
+                        animate-in
+                        fade-in
+                        slide-in-from-bottom-2
+                        duration-200
+                        text-white
+                        ">
             {/* Header */}
             <div className="flex items-center gap-4 p-4 border-b border-zinc-800">
                 <div className="flex h-12 w-12 items-center justify-center rounded-full bg-red-600 text-lg font-bold">
@@ -84,25 +90,37 @@ text-white
 };
 const SideBar = () => {
     const [open, setOpen] = useState(false);
-    const reference = useRef(null);
+    const [isSearchOpen, setSearchOpen] = useState(false);
+    const profRef = useRef(null);
+    const searchRef = useRef(null)
     useEffect(() => {
-        function handleOutsideClick(e) {
-            if (open && !reference?.current?.contains(e.target))
+        function handleOutsideClickProf(e) {
+            if (!profRef?.current?.contains(e.target))
                 setOpen(false);
         }
-        document.addEventListener('mousedown', handleOutsideClick);
+        function handleOutsideClickSearch(e) {
+            if (!searchRef?.current?.contains(e.target))
+                setSearchOpen(false);
+        }
+
+        document.addEventListener('mousedown', handleOutsideClickProf);
         return () => {
-            document.removeEventListener('mousedown', handleOutsideClick);
+            document.removeEventListener('mousedown', handleOutsideClickProf);
+            
         }
     }, [open])
     return (
         <div className="fixed z-9999 top-0 left-0 flex flex-col h-screen min-w-6 w-min gap-3 items-center p-2 bg-zinc-950">
-            <Link to="/"><Button icon={<SearchIcon size={20} />} /></Link>
+            <div onClick={() => setSearchOpen(!isSearchOpen)} ref={searchRef}>
+                <Button icon={<SearchIcon size={20} />} />
+            </div>
+            {isSearchOpen && <SearchMenu />}
             <Link to="/"><Button icon={<VideoIcon size={20} />} /></Link>
-            <div className="mt-auto relative" onClick={() => setOpen(!open)} ref={reference}>
+            <div className="mt-auto relative" onClick={() => setOpen(!open)} ref={profRef}>
                 <Button icon={<User2Icon />} size={20} />
                 {open && <ProfileMenu />}
             </div>
+
         </div>
     )
 }
