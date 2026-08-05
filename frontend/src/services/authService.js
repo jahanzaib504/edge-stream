@@ -31,3 +31,11 @@ const signup = async(email, username, password)=>{
     // Verify email
     return true;
 }
+
+const get_user = async ()=>{
+    if(env.USE_MOCK)
+            return userMock;
+    const request = await api.get('/user/me');
+    return request.data
+}
+export {get_user}
