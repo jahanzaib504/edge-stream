@@ -1,6 +1,6 @@
 const moviesMock = [
   {
-    movieId: "uid83777263",
+    movie_id: "uid83777263",
 
     title: "Shutter Island",
 

@@ -5,6 +5,7 @@ import HomePage from "../pages/HomePage";
 import SideBar from "../components/sidebar";
 import MoviePage from "../pages/MoviePage";
 import PlayerPage from "../pages/PlayerPage";
+import LoginSignUp from "../components/logInSignup"
 const Router = () => {
     return (
         <Providers>
@@ -16,6 +17,8 @@ const Router = () => {
                         <Route path="/" element={<HomePage />} />
                         <Route path="/movie/:movie_id" element={<MoviePage />} />
                         <Route path="/player/:movie_id" element={<PlayerPage />} />
+                        <Route path="log-in" element={<LoginSignUp isLogin={true} />}/>
+                        <Route path="sign-up" element={<LoginSignUp isLogin={false} />}/>
                     </Routes>
                 </div>
             </BrowserRouter>

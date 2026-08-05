@@ -52,7 +52,8 @@ const useProfile = create((set)=>({
     finally{
       set({loading:false})
     }
-  }
+  },
+  setUser: (user)=>set({user})
 }))
 
 export { useRecommendations, useMovie, useProfile};

@@ -16,7 +16,7 @@ const login = async(email, password)=>{
     if(env.USE_MOCK){
         return userMock;
     }
-    const data = await api.post("/auth/login", {body:{email, password}});
+    const data = await api.post("/user/login", {body:{email, password}});
     const user = data?.user;
     const token = data?.token;
     setToken(token);
@@ -27,9 +27,11 @@ const signup = async(email, username, password)=>{
     if(env.USE_MOCK){
         return userMock;
     }
-    await api.post("/auth/signup", {body:{email, username, password}});
-    // Verify email
-    return true;
+    const data = await api.post("/user/register", {body:{email, username, password}});
+    const user = data?.user;
+    const token = data?.token;
+    setToken(token);
+    return user;
 }
 
 const get_user = async ()=>{
@@ -38,4 +40,4 @@ const get_user = async ()=>{
     const request = await api.get('/user/me');
     return request.data
 }
-export {get_user}
+export {get_user, login, signup}
