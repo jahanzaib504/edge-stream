@@ -19,15 +19,15 @@ class MovieModel(models.Model):
         editable=False
     )
 
-    movie_title = models.CharField(max_length=200)
-    movie_poster_url = models.URLField()
-    movie_description = models.TextField()
-    movie_video_url = models.URLField()
+    title = models.CharField(max_length=200)
+    poster_url = models.URLField(blank=True)
+    description = models.TextField()
+    video_url = models.URLField(blank=True)
 
     
-    movie_cast = models.JSONField(default=list)
+    cast = models.JSONField(default=list, blank=True)
 
-    movie_duration = models.FloatField(default=0)
+    duration = models.FloatField(default=0)
 
     average_rating = models.FloatField(default=0)
     average_engagement = models.FloatField(default=0)
@@ -42,7 +42,7 @@ class MovieModel(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
-        return self.movie_title
+        return self.title
 
 
 class MovieRating(models.Model):
