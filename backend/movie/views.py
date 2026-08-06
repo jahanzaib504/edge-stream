@@ -149,3 +149,46 @@ def watch_session(request: Request):
     except Exception as e:
         return Response({"message": str(e)}, status=status.HTTP_400_BAD_REQUEST)
     return Response(serializer.data, status=status.HTTP_200_OK)
+
+# Recommendation engine
+@api_view(['GET'])
+@permission_classes([IsAuthenticated])
+def get_recommendations(request):
+    recommendations = {
+        'hitmost': {},
+        'trending': [],
+        'featured': [],
+        'foryou': []
+    }
+
+    top_11 = MovieModel.objects.order_by(
+        "-total_views",
+        "-average_engagement",
+        "-average_rating"
+    )[:11]
+
+    top_11 = list(top_11)
+
+    if not top_11:
+        return Response(recommendations)
+
+    top_movie = top_11[0]
+    recommendations['hitmost'] = {
+        'movie_id': top_movie.movie_id,
+        'poster_url': top_movie.poster_url,
+        'genres': list(top_movie.genres.values_list('name', flat=True)),
+    }
+
+    recommendations['trending'] = [
+        {
+            'movie_id': movie.movie_id,
+            'poster_url': movie.poster_url,
+            'created_at': movie.created_at
+        }
+        for movie in top_11[1:11]
+    ]
+
+    # TODO: populate 'featured' and 'foryou' with real logic
+    # (e.g. curated picks, or per-user recommendations based on history)
+
+    return Response(recommendations)

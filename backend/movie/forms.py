@@ -5,7 +5,7 @@ from .services.aws import save_to_s3
 from django.core.validators import FileExtensionValidator
 class AdminMovieForm(ModelForm):
     video_file = Fields.FileField(validators=[FileExtensionValidator(['mp4'])])
-    poster_file = Fields.FileField(validators=[FileExtensionValidator(['jpeg', 'jpg', 'png'])])
+    poster_file = Fields.FileField(validators=[FileExtensionValidator(['jpeg', 'jpg', 'png', 'webp'])])
     
     class Meta:
         model = MovieModel
