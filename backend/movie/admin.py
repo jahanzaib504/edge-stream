@@ -20,6 +20,7 @@ class MovieAdmin(admin.ModelAdmin):
         "average_rating",
         "average_engagement",
         "total_views",
+        "id"
     ]
 
     def save_model(self, request, obj, form, change):

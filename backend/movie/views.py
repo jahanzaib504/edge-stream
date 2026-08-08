@@ -12,10 +12,10 @@ from .serializers import MovieSerializer, WatchSessionSerializer
 
 
 class MovieView(APIView):
-    permission_classes = [IsAuthenticated]
+    # permission_classes = [IsAuthenticated]
 
-    def get(self, request: Request):
-        movie_id = request.query_params.get('movie_id', '')
+    def get(self, request: Request, movie_id):
+        
         if not movie_id:
             return Response({"message": "Please specify a movie id"}, status=status.HTTP_400_BAD_REQUEST)
         movie = get_object_or_404(MovieModel, id=movie_id)
@@ -36,12 +36,12 @@ class MovieView(APIView):
             return Response({"message": str(e)}, status=status.HTTP_400_BAD_REQUEST)
         return Response(serializer.data, status=status.HTTP_201_CREATED)
 
-    def put(self, request: Request):
+    def put(self, request: Request, movie_id):
         # Only admins can update movies
         self.permission_classes = [IsAdminUser]
         self.check_permissions(request)
 
-        movie_id = request.query_params.get('movie_id') or request.data.get('movie_id')
+        
         if not movie_id:
             return Response({"message": "Please specify a movie id"}, status=status.HTTP_400_BAD_REQUEST)
         movie = get_object_or_404(MovieModel, id=movie_id)
@@ -55,12 +55,12 @@ class MovieView(APIView):
             return Response({"message": str(e)}, status=status.HTTP_400_BAD_REQUEST)
         return Response(serializer.data)
 
-    def delete(self, request: Request):
+    def delete(self, request: Request, movie_id):
         # Only admins can delete movies
         self.permission_classes = [IsAdminUser]
         self.check_permissions(request)
 
-        movie_id = request.query_params.get('movie_id')
+        
         if not movie_id:
             return Response({"message": "Please specify a movie id"}, status=status.HTTP_400_BAD_REQUEST)
         movie = get_object_or_404(MovieModel, id=movie_id)
@@ -152,7 +152,7 @@ def watch_session(request: Request):
 
 # Recommendation engine
 @api_view(['GET'])
-@permission_classes([IsAuthenticated])
+# @permission_classes([IsAuthenticated])
 def get_recommendations(request):
     recommendations = {
         'hitmost': {},
@@ -174,14 +174,14 @@ def get_recommendations(request):
 
     top_movie = top_11[0]
     recommendations['hitmost'] = {
-        'movie_id': top_movie.movie_id,
+        'id': top_movie.id,
         'poster_url': top_movie.poster_url,
         'genres': list(top_movie.genres.values_list('name', flat=True)),
     }
 
     recommendations['trending'] = [
         {
-            'movie_id': movie.movie_id,
+            'id': movie.id,
             'poster_url': movie.poster_url,
             'created_at': movie.created_at
         }
