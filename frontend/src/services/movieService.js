@@ -15,8 +15,18 @@ const get_movie = async(movie_id)=>{
     if (env.USE_MOCK)
         return moviesMock[0]
     // Send already loaded movie id's
-    const request = await api.get('/movie?movie_id');
+    const request = await api.get(`/movie/m/${movie_id}`);
     return request.data
 }
+const register_click = async(movie_id)=>{
+    if (env.USE_MOCK)
+        return true;
+    try{
+        const request = await api.post("movie/click", {movie_id});
+    }
+    catch(e){
+        console.log(e)
+    }
+}
 
-export {get_recommendations, get_movie}
+export {get_recommendations, get_movie, register_click}

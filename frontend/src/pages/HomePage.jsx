@@ -11,7 +11,7 @@ const Header = () => {
     return (
         <header>
             <div
-                onClick={() => navigate(`/movie/${hitMost?.movie_id}`)}
+                onClick={() => navigate(`/movie/${hitMost?.id}`)}
                 className="relative mt-4 mr-4 h-95 rounded-lg bg-red-400 z-20 bg-cover bg-center shadow-red-300 shadow-inner cursor-pointer"
                 style={{ backgroundImage: `url(${hitMost?.poster_url ?? ""})` }}
             >
@@ -34,13 +34,13 @@ const MovieRow = ({ title, items, onNavigate }) => {
         <>
             <h2 className="mt-3 text-xl font-bold">{title}</h2>
             <div className="flex gap-5 mt-2">
-                {items.map(({ poster_url, movie_id, title: movieTitle }) => (
+                {items.map(({ poster_url, id, title: movieTitle }) => (
                     <img
-                        key={movie_id}
+                        key={id}
                         src={poster_url ?? ""}
                         alt={movieTitle ?? "Movie poster"}
                         className="w-28 h-40 object-cover rounded cursor-pointer"
-                        onClick={() => onNavigate(movie_id)}
+                        onClick={() => onNavigate(id)}
                     />
                 ))}
             </div>
@@ -54,7 +54,7 @@ const Main = () => {
     const wrapperRef = useRef(null);
     const navigate = useNavigate();
 
-    const handleNavigate = (movie_id) => navigate(`/movie/${movie_id}`);
+    const handleNavigate = (id) => navigate(`/movie/${id}`);
 
     if (loading) {
         return <p className="mt-5 text-center">Loading recommendations...</p>;

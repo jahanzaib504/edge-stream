@@ -12,7 +12,7 @@ from .serializers import MovieSerializer, WatchSessionSerializer
 
 
 class MovieView(APIView):
-    # permission_classes = [IsAuthenticated]
+    permission_classes = [IsAuthenticated]
 
     def get(self, request: Request, movie_id):
         
@@ -151,44 +151,53 @@ def watch_session(request: Request):
     return Response(serializer.data, status=status.HTTP_200_OK)
 
 # Recommendation engine
-@api_view(['GET'])
-# @permission_classes([IsAuthenticated])
+@api_view(["GET"])
+@permission_classes([IsAuthenticated])
 def get_recommendations(request):
     recommendations = {
-        'hitmost': {},
-        'trending': [],
-        'featured': [],
-        'foryou': []
+        "hitmost": {},
+        "trending": [],
+        "featured": [],
+        "foryou": [],
     }
 
-    top_11 = MovieModel.objects.order_by(
+    movies = MovieModel.objects.order_by(
         "-total_views",
         "-average_engagement",
-        "-average_rating"
+        "-average_rating",
     )[:11]
 
-    top_11 = list(top_11)
+    serialized_movies = MovieSerializer(
+        movies,
+        many=True,
+        context={"request": request},
+    ).data
 
-    if not top_11:
+    if not serialized_movies:
         return Response(recommendations)
 
-    top_movie = top_11[0]
-    recommendations['hitmost'] = {
-        'id': top_movie.id,
-        'poster_url': top_movie.poster_url,
-        'genres': list(top_movie.genres.values_list('name', flat=True)),
+    # Most popular movie
+    top_movie = serialized_movies[0]
+
+    recommendations["hitmost"] = {
+        "id": top_movie["id"],
+        "poster_url": top_movie["poster_url"],
+        "genres": top_movie["genres"],
     }
 
-    recommendations['trending'] = [
+    # Other popular/trending movies
+    recommendations["trending"] = [
         {
-            'id': movie.id,
-            'poster_url': movie.poster_url,
-            'created_at': movie.created_at
+            "id": movie["id"],
+            "poster_url": movie["poster_url"],
+            "created_at": movie["created_at"],
         }
-        for movie in top_11[1:11]
+        for movie in serialized_movies[1:]
     ]
 
-    # TODO: populate 'featured' and 'foryou' with real logic
-    # (e.g. curated picks, or per-user recommendations based on history)
+    # TODO: Add actual recommendation logic
+    # recommendations["featured"] = ...
+    # recommendations["foryou"] = ...
 
     return Response(recommendations)
+

@@ -4,9 +4,9 @@ import { Play, Star, Calendar, Clock } from "lucide-react";
 import { useMovie } from "../app/store";
 import convertTime from "../utils/timeConverter";
 
-
+import { register_click } from "../services/movieService";
 const MoviePage = () => {
-
+    
     const {movie_id} = useParams();
 
     const movie = useMovie((state) => state.movie);
@@ -19,7 +19,9 @@ const MoviePage = () => {
         if(movie_id)
             fetchMovie(movie_id);
     }, [movie_id, fetchMovie]);
-
+    useEffect(()=>{
+        register_click(movie_id);
+    }, [])
 
     if(loading)
     {

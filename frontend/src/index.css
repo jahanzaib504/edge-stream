@@ -8,3 +8,6 @@
     --color-accent: #eab308;
 
 }
+:root{
+    --sidebar-width: 60px;
+}

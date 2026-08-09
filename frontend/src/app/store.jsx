@@ -40,11 +40,12 @@ const useMovie = create((set) => ({
 
 const useProfile = create((set)=>({
   user: null,
-  loading: false,
+  loading: true,
   fetchUser: async ()=>{
-    set({loading:true});
+    set({loading:true, error:null});
     try{
       const data = await get_user();
+      console.log(data)
       set({user:data});
     }catch(e){
       set({ error: e?.message || "Failed to fetch user" });

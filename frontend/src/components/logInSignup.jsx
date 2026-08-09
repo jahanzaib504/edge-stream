@@ -1,6 +1,7 @@
 import { useState } from "react";
 import {login, signup} from "../services/authService"
 import {useProfile} from "../app/store"
+import { useNavigate } from "react-router";
 const LoginSignUp = ({ isLogin = true }) => {
     const [loginMode, setLoginMode] = useState(isLogin);
     const setUser = useProfile((state)=>state.setUser);
@@ -9,7 +10,7 @@ const LoginSignUp = ({ isLogin = true }) => {
         email: "",
         password: ""
     });
-
+    const navigate = useNavigate();
     const handleChange = (e) => {
         setFormData({
             ...formData,
@@ -22,10 +23,12 @@ const LoginSignUp = ({ isLogin = true }) => {
 
         if (loginMode) {
             console.log("Login:", formData);
-            login(email, password).then((data)=> setUser(data)).catch((e)=>console.log(e.message));
+            login(formData).then((data)=>{ setUser(data); navigate("/")}).catch((e)=>console.log(e));
+            
         } else {
             console.log("Signup:", formData);
-            signup(email, username, password).then((data)=> setUser(data)).catch((e)=>console.log(e.message));
+            signup(formData).then((data)=> { setUser(data); navigate("/")}).catch((e)=>console.log(e));
+            navigate("/");
         }
     };
 

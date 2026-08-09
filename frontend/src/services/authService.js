@@ -12,25 +12,29 @@ const getUser = async ()=>{
     const user = await api.get("/auth/me")
     return user;
 }
-const login = async(email, password)=>{
+const login = async({email, password})=>{
     if(env.USE_MOCK){
         return userMock;
     }
-    const data = await api.post("/user/login", {body:{email, password}});
-    const user = data?.user;
-    const token = data?.token;
-    setToken(token);
+    
+    const request = await api.post("/user/login", {email, password});
+    const user = request.data?.user;
+    const tokens = request.data?.tokens;
+    setToken(tokens?.access);
+    console.log(request.data)
+    localStorage.setItem("refresh", tokens?.refresh)
     return user;
 }
 
-const signup = async(email, username, password)=>{
+const signup = async({email, username, password})=>{
     if(env.USE_MOCK){
         return userMock;
     }
-    const data = await api.post("/user/register", {body:{email, username, password}});
+    const data = await api.post("/user/register", {email, username, password});
     const user = data?.user;
-    const token = data?.token;
-    setToken(token);
+    const tokens = data?.token;
+    setToken(tokens?.access);
+    localStorage.setItem("refresh", tokens?.refresh)
     return user;
 }
 

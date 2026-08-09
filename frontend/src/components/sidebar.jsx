@@ -110,7 +110,7 @@ const SideBar = () => {
         }
     }, [open])
     return (
-        <div className="fixed z-9999 top-0 left-0 flex flex-col h-screen min-w-6 w-min gap-3 items-center p-2 bg-zinc-950">
+        <div className="fixed z-9999 top-0 left-0 flex flex-col h-screen min-w-(--sidebar-width) w-min gap-3 items-center p-2 bg-zinc-950">
             <div onClick={() => setSearchOpen(!isSearchOpen)} ref={searchRef}>
                 <Button icon={<SearchIcon size={20} />} />
             </div>

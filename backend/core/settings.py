@@ -42,7 +42,8 @@ INSTALLED_APPS = [
     'user.apps.UserConfig',
     'movie.apps.MovieConfig',
     'django.contrib.postgres',
-    'storages'
+    'storages',
+    'corsheaders'
 ]
 
 STORAGES = {
@@ -65,6 +66,7 @@ REST_FRAMEWORK = {
 }
 AUTH_USER_MODEL = "user.UserModel"
 MIDDLEWARE = [
+    "corsheaders.middleware.CorsMiddleware",  # Keep this at the top
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
@@ -72,6 +74,11 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+]
+
+CORS_ALLOWED_ORIGINS = [
+    "http://localhost:3000",  # Common React port
+    "http://localhost:5173",  # Common Vite port
 ]
 
 ROOT_URLCONF = 'core.urls'

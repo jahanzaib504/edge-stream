@@ -1,8 +1,19 @@
 from rest_framework import serializers
 from .models import MovieModel, MovieClick, SearchHistory, WatchSession, MovieRating
+from django.core.files.storage import default_storage
+# This custom field appends s3 url when reading otherwise does not
+class URLFieldCustom(serializers.URLField):
+    def to_representation(self, value):
+        if not value:
+            return None
+        return default_storage.url(value)
 
-
+    def to_internal_value(self, data):
+        return super().to_internal_value(data)
+    
 class MovieSerializer(serializers.ModelSerializer):
+    video_url = URLFieldCustom()
+    poster_url = URLFieldCustom()
     class Meta:
         model = MovieModel
         fields = "__all__"
