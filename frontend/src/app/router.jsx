@@ -7,6 +7,7 @@ import PlayerPage from "../pages/PlayerPage";
 import LoginSignUp from "../components/logInSignup"
 import { AuthProvider } from "./providers";
 import { DashboardLayout } from "../components/DashboardLayout";
+import { ProfilePage } from "../pages/ProfilePage";
 const Router = () => {
     return (
         <BrowserRouter>
@@ -16,6 +17,7 @@ const Router = () => {
                         <Route path="/" element={<HomePage />} />
                         <Route path="/movie/:movie_id" element={<MoviePage />} />
                         <Route path="/player/:movie_id" element={<PlayerPage />} />
+                        <Route path="/profile" element={<ProfilePage/>} />
                     </Route>
                 </Route>
 

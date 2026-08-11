@@ -35,7 +35,7 @@ const App = () => {
 
         refreshToken();
 
-        const timer = setInterval(refreshToken, 13 * 60 * 1000);
+        const timer = setInterval(refreshToken, 4 * 60 * 1000);
 
         return () => clearInterval(timer);
     }, []);

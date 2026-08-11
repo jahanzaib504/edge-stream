@@ -81,7 +81,7 @@ def movie_click(request: Request):
 
     try:
         MovieClick.objects.create(user_id=user.id, movie_id=movie_id)
-        
+        print("Registering click")
         MovieModel.objects.filter(id=movie_id).update(total_views=F('total_views') + 1)
     except Exception as e:
         return Response({"message": str(e)}, status=status.HTTP_400_BAD_REQUEST)

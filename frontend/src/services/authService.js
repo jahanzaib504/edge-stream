@@ -44,4 +44,15 @@ const get_user = async ()=>{
     const request = await api.get('/user/me');
     return request.data
 }
-export {get_user, login, signup}
+const delete_profile = async()=>{
+    if(env.USE_MOCK)
+        return true;
+    const request = await api.delete('/user');
+}
+const update_profile= async({username, password})=>{
+    if(env.USE_MOCK)    
+        return true;
+
+    const request = await api.patch('/user');
+}
+export {get_user, login, signup, delete_profile, update_profile}

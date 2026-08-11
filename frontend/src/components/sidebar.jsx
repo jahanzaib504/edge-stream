@@ -1,7 +1,8 @@
 import { HomeIcon, VideoIcon, User2Icon, SearchIcon } from "lucide-react"
-import { Link } from "react-router"
+import { Link, useNavigate } from "react-router"
 import { useProfile } from "../app/store"
 import { useEffect, useRef, useState } from "react"
+import { removeToken } from "../utils/tokenManagment"
 const SearchMenu = () => {
     return (
         <div className="fixed top-7 left-[50%] translate-x-[-50%] bg-gray-900 rounded-4xl w-100">
@@ -30,10 +31,17 @@ const Button = ({ icon }) => (
 const ProfileMenu = () => {
     const username = useProfile((state) => state.user?.username);
     const email = useProfile((state) => state.user?.email);
-    const fetchUser = useProfile((state) => state.fetchUser)
+    const fetchUser = useProfile((state) => state.fetchUser);
+    const setUser = useProfile((state)=> state.setUser);
+    const navigate = useNavigate();
     useEffect(() => {
 
     }, [])
+    const handleLogOut = ()=>{
+        removeToken();
+        setUser(null);
+        localStorage.removeItem("refresh");
+    }
     return (
         <div className="
                         absolute
@@ -71,17 +79,13 @@ const ProfileMenu = () => {
 
             {/* Menu Items */}
             <div className="p-2">
-                <button className="flex w-full items-center rounded-lg px-3 py-2 text-sm transition hover:bg-zinc-800">
+                <div className="flex w-full items-center rounded-lg px-3 py-2 text-sm transition hover:bg-zinc-800" onClick={()=>navigate("/profile")}>
                     Profile
-                </button>
-
-                <button className="flex w-full items-center rounded-lg px-3 py-2 text-sm transition hover:bg-zinc-800">
-                    Settings
-                </button>
+                </div>
 
                 <div className="my-2 border-t border-zinc-800" />
 
-                <button className="w-full rounded-lg bg-red-600 px-3 py-2 text-sm font-medium transition hover:bg-red-700">
+                <button className="w-full rounded-lg bg-red-600 px-3 py-2 text-sm font-medium transition hover:bg-red-700" onClick={handleLogOut}>
                     Logout
                 </button>
             </div>

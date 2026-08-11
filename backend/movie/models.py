@@ -93,7 +93,13 @@ class MovieClick(models.Model):
     )
 
     created_at = models.DateTimeField(auto_now_add=True)
-
+    # Unique user click constraint
+    class Meta:
+        constraints = [
+            models.UniqueConstraint(fields=["user", "movie"],
+                                    name="unique_click_constraint"
+                                    )
+        ]
     def __str__(self):
         return f"{self.user} clicked {self.movie}"
 

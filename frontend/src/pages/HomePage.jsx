@@ -12,7 +12,7 @@ const Header = () => {
         <header>
             <div
                 onClick={() => navigate(`/movie/${hitMost?.id}`)}
-                className="relative mt-4 mr-4 h-95 rounded-lg bg-red-400 z-20 bg-cover bg-center shadow-red-300 shadow-inner cursor-pointer"
+                className="relative mt-4 mr-4 h-95 w-5xl rounded-lg bg-red-400 z-20 bg-cover bg-center cursor-pointer"
                 style={{ backgroundImage: `url(${hitMost?.poster_url ?? ""})` }}
             >
                 <div className="absolute bottom-4 flex gap-4">
@@ -32,7 +32,7 @@ const MovieRow = ({ title, items, onNavigate }) => {
 
     return (
         <>
-            <h2 className="mt-3 text-xl font-bold">{title}</h2>
+            <h2 className="mt-3 text-xl font-bold text-zinc-100">{title}</h2>
             <div className="flex gap-5 mt-2">
                 {items.map(({ poster_url, id, title: movieTitle }) => (
                     <img
@@ -78,10 +78,14 @@ const HomePage = () => {
     }, [fetchRecommendations]);
 
     return (
-        <div>
-            <Header />
-            <Main />
-            <div className="mt-5" />
+        <div className="bg-zinc-900 min-h-screen py-10">
+            
+                <div className="ml-11">
+                    <Header />
+                    <Main />
+                    <div className="mt-5" />
+                </div>
+            
         </div>
     );
 };
