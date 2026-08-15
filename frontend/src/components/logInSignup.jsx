@@ -18,7 +18,7 @@ const LoginSignUp = ({ isLogin = true }) => {
         });
     };
 
-    const handleSubmit = (e) => {
+    const handleSubmit =  (e) => {
         e.preventDefault();
 
         if (loginMode) {
@@ -27,8 +27,8 @@ const LoginSignUp = ({ isLogin = true }) => {
             
         } else {
             console.log("Signup:", formData);
-            signup(formData).then((data)=> { setUser(data); navigate("/")}).catch((e)=>console.log(e));
-            navigate("/");
+            signup(formData).then(()=> {localStorage.setItem("email", formData.email); navigate("/generate-verification-link")}).catch((e)=>console.log(e));
+            
         }
     };
 

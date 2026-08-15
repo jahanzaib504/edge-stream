@@ -1,4 +1,4 @@
-from .views import register_user, login_user, logout_user, test, get_me
+from .views import register_user, login_user, logout_user, test, get_me, get_email_verification_link, verify_email
 from django.urls import path, include
 from rest_framework_simplejwt.views import (
     TokenObtainPairView,
@@ -12,5 +12,7 @@ urlpatterns = [
     path('me', get_me),
     path('token', TokenObtainPairView.as_view()),
     path('refresh', TokenRefreshView.as_view()),
-    path('test', test)
+    path('test', test),
+    path('generate-verification-link/', get_email_verification_link, name="generate-verification-link"),
+    path('verify-email/', verify_email)
 ]

@@ -1,0 +1,32 @@
+
+services:
+  frontend:
+    build: ./frontend
+    container_name: frontend
+    restart: always
+    ports:
+      - "5173:5173"
+    depends_on:
+      - backend
+  backend:
+    build: ./backend
+    container_name: backend
+    restart: always
+    ports:
+      - "8000:8000" 
+    depends_on:
+      - postgres
+  postgres:
+    image: postgres:16
+    container_name: postgres
+    restart: always
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: edge_stream_db
+    expose:
+      - 5432
+    volumes:
+      - postgres_data:/var/lib/postgresql/data    
+volumes:
+  postgres_data:

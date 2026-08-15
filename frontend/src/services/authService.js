@@ -31,11 +31,6 @@ const signup = async({email, username, password})=>{
         return userMock;
     }
     const data = await api.post("/user/register", {email, username, password});
-    const user = data?.user;
-    const tokens = data?.token;
-    setToken(tokens?.access);
-    localStorage.setItem("refresh", tokens?.refresh)
-    return user;
 }
 
 const get_user = async ()=>{

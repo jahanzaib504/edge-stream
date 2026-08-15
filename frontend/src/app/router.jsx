@@ -8,6 +8,8 @@ import LoginSignUp from "../components/logInSignup"
 import { AuthProvider } from "./providers";
 import { DashboardLayout } from "../components/DashboardLayout";
 import { ProfilePage } from "../pages/ProfilePage";
+import VerificationPage from "../pages/VerificationPage"
+import GenerateVerification from "../pages/GenerateVerification";
 const Router = () => {
     return (
         <BrowserRouter>
@@ -23,6 +25,8 @@ const Router = () => {
 
                 <Route path="login" element={<LoginSignUp isLogin={true} />} />
                 <Route path="signup" element={<LoginSignUp isLogin={false} />} />
+                <Route path="/verify-email/" element={<VerificationPage />} />
+                <Route path="/generate-verification-link" element={<GenerateVerification />} />
             </Routes>
         </BrowserRouter>
     )
