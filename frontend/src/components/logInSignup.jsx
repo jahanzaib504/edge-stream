@@ -1,10 +1,11 @@
 import { useState } from "react";
-import {login, signup} from "../services/authService"
-import {useProfile} from "../app/store"
+import {generate_verification_link, login, signup} from "../services/authService"
+import {useProfile, useVerification} from "../app/store"
 import { useNavigate } from "react-router";
 const LoginSignUp = ({ isLogin = true }) => {
     const [loginMode, setLoginMode] = useState(isLogin);
     const setUser = useProfile((state)=>state.setUser);
+    const sendVerification = useVerification((state)=>state.sendVerification);
     const [formData, setFormData] = useState({
         username: "",
         email: "",
@@ -27,7 +28,13 @@ const LoginSignUp = ({ isLogin = true }) => {
             
         } else {
             console.log("Signup:", formData);
-            signup(formData).then(()=> {localStorage.setItem("email", formData.email); navigate("/generate-verification-link")}).catch((e)=>console.log(e));
+            signup(formData).then(()=> {
+                localStorage.setItem("email", formData.email); 
+                // Generate a verification link
+                sendVerification();
+                navigate("/generate-verification-link")
+                
+            }).catch((e)=>console.log(e));
             
         }
     };

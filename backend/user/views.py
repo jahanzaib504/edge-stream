@@ -13,7 +13,7 @@ from django.core.signing import TimestampSigner, BadSignature, SignatureExpired
 from decouple import config
 from .utils.email_service import send_email
 from rest_framework.request import Request
-
+from datetime import timedelta
 signer = TimestampSigner()
 
 def generate_verification_link(user_id):
@@ -31,6 +31,7 @@ def register_user(request):
     try:
         user = serializer.save()
     except IntegrityError as e:
+        print(e)
         return Response({"message": "This user or email already exists"}, status=403)
     # User data saved but is still unverified
     return Response({"message": "User sign up complete"}, status=200)
@@ -38,9 +39,8 @@ def register_user(request):
 
 @api_view(["GET"])
 def get_email_verification_link(request: Request):
-    # Extract user email
     user_email = request.query_params.get("email")
-    
+
     try:
         user = UserModel.objects.get(email=user_email)
     except UserModel.DoesNotExist:
@@ -55,8 +55,27 @@ def get_email_verification_link(request: Request):
             status=status.HTTP_200_OK
         )
 
+    if (
+        user.last_created
+        and timezone.now() - user.last_created < timedelta(hours=24)
+    ):
+        return Response(
+            {"message": "You can request another verification mail after 24 hours."},
+            status=status.HTTP_403_FORBIDDEN
+        )
+
     link = generate_verification_link(str(user.id))
-    send_email(user.email, link)
+
+    try:
+        send_email(user.email, link)
+    except Exception:
+        return Response(
+            {"message": "Failed to send verification email."},
+            status=status.HTTP_500_INTERNAL_SERVER_ERROR
+        )
+
+    user.last_created = timezone.now()
+    user.save(update_fields=["last_created"])
 
     return Response(
         {"message": "Verification email sent."},
@@ -70,8 +89,8 @@ def verify_email(request:Request):
     token = request.query_params.get('token')
     
     try:
-        # Validates signature and checks if created within 2 minutes 
-        user_id = signer.unsign(token, max_age=120)
+        # Validates signature and checks if created within 24 hours
+        user_id = signer.unsign(token, max_age=60*60*24)
         
         # Fetch user and activate
         user = UserModel.objects.get(pk=user_id)

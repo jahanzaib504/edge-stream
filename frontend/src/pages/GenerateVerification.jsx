@@ -1,8 +1,10 @@
 import { useEffect, useState } from "react";
 import api from "../api/axios";
+import { useVerification } from "../app/store";
 
 const GenerateVerification = () => {
-    const [loading, setLoading] = useState(false);
+    const loading = useVerification((state)=>state.loading);
+    const setLoading = useVerification((state)=>state.setLoading);
     const [message, setMessage] = useState(
         "A verification email has been sent to your email address. Please check your inbox and spam folder."
     );
@@ -27,7 +29,7 @@ const GenerateVerification = () => {
         }
     };
     useEffect(()=>{
-        resendEmail(); // Send the verification mail at the start
+        
     }, [])
     return (
         <div className="min-h-screen flex items-center justify-center bg-black px-4">

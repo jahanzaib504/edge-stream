@@ -50,4 +50,10 @@ const update_profile= async({username, password})=>{
 
     const request = await api.patch('/user');
 }
-export {get_user, login, signup, delete_profile, update_profile}
+const generate_verification_link = ()=>{
+    const email = localStorage.getItem("email");
+    // Sends a verification link to use
+    api.get(`/user/generate-verification-link/?email=${encodeURIComponent(email)}`);
+    return true
+}
+export {get_user, login, signup, delete_profile, update_profile, generate_verification_link}

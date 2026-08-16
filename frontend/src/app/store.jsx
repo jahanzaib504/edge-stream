@@ -1,6 +1,6 @@
 import { create } from "zustand";
 import { get_recommendations, get_movie } from "../services/movieService";
-import { get_user } from "../services/authService";
+import { generate_verification_link, get_user } from "../services/authService";
 import { recommendations } from "../mocks/recommendations";
 
 const useRecommendations = create((set) => ({
@@ -57,4 +57,21 @@ const useProfile = create((set)=>({
   setUser: (user)=>set({user})
 }))
 
-export { useRecommendations, useMovie, useProfile};
+const useVerification = create((set)=>({
+  loading:false,
+  error:null,
+  sendVerification: async()=>{
+    set({loading:null, error:null});
+    try{
+      generate_verification_link();
+    }catch(e){
+      set({error: e?.message || "Failed to generate verification"})
+    }
+    finally{
+      set({loading:false})
+    }
+  },
+  setLoading: (value)=>{set({loading:value})}
+}))
+
+export { useRecommendations, useMovie, useProfile, useVerification};
