@@ -38,40 +38,57 @@ const useMovie = create((set) => ({
   },
 }));
 
-const useProfile = create((set)=>({
+const useProfile = create((set) => ({
   user: null,
   loading: true,
-  fetchUser: async ()=>{
-    set({loading:true, error:null});
-    try{
+  fetchUser: async () => {
+    set({ loading: true, error: null });
+    try {
       const data = await get_user();
       console.log(data)
-      set({user:data});
-    }catch(e){
+      set({ user: data });
+    } catch (e) {
       set({ error: e?.message || "Failed to fetch user" });
     }
-    finally{
-      set({loading:false})
+    finally {
+      set({ loading: false })
     }
   },
-  setUser: (user)=>set({user})
+  setUser: (user) => set({ user })
 }))
 
-const useVerification = create((set)=>({
-  loading:false,
-  error:null,
-  sendVerification: async()=>{
-    set({loading:null, error:null});
-    try{
-      generate_verification_link();
-    }catch(e){
-      set({error: e?.message || "Failed to generate verification"})
-    }
-    finally{
-      set({loading:false})
+const useVerification = create((set) => ({
+  loading: false,
+  error: null,
+
+  sendVerification: async () => {
+    set({
+      loading: true,
+      error: null,
+    });
+
+    try {
+      await generate_verification_link();
+    } catch (e) {
+      console.log(e);
+
+      set({
+        error:
+          e.response?.data?.message ||
+          "Failed to resend verification email.",
+      });
+
+      return null;
+    } finally {
+      set({
+        loading: false,
+      });
     }
   },
-  setLoading: (value)=>{set({loading:value})}
-}))
 
-export { useRecommendations, useMovie, useProfile, useVerification};
+  setLoading: (value) => {
+    set({ loading: value });
+  },
+}));
+
+export { useRecommendations, useMovie, useProfile, useVerification };

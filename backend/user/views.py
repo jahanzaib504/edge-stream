@@ -34,7 +34,7 @@ def register_user(request):
         print(e)
         return Response({"message": "This user or email already exists"}, status=403)
     # User data saved but is still unverified
-    return Response({"message": "User sign up complete"}, status=200)
+    return Response(serializer.validated_data, status=200)
 
 
 @api_view(["GET"])

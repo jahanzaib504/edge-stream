@@ -5,28 +5,15 @@ import { useVerification } from "../app/store";
 const GenerateVerification = () => {
     const loading = useVerification((state)=>state.loading);
     const setLoading = useVerification((state)=>state.setLoading);
+    const error = useVerification((state)=>state.error);
+    const sendVerification = useVerification((state)=>state.sendVerification);
+
     const [message, setMessage] = useState(
         "A verification email has been sent to your email address. Please check your inbox and spam folder."
     );
 
-    const resendEmail = async () => {
-        try {
-            setLoading(true);
-
-            
-            const email = localStorage.getItem("email");
-            
-            const response = await api.get(`user/generate-verification-link/?email=${encodeURIComponent(email)}`);
-
-            setMessage(response?.data?.message);
-        } catch (error) {
-            setMessage(
-                error.response?.data?.message ||
-                "Failed to resend verification email."
-            );
-        } finally {
-            setLoading(false);
-        }
+    const resendEmail = () => {
+        sendVerification();
     };
     useEffect(()=>{
         
@@ -41,7 +28,7 @@ const GenerateVerification = () => {
                 </h1>
 
                 <p className="mt-4 text-zinc-400">
-                    {message}
+                    {error || message}
                 </p>
 
                 <button

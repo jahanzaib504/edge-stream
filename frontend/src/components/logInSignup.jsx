@@ -28,8 +28,8 @@ const LoginSignUp = ({ isLogin = true }) => {
             
         } else {
             console.log("Signup:", formData);
-            signup(formData).then(()=> {
-                localStorage.setItem("email", formData.email); 
+            signup(formData).then((data)=> {
+                setUser(data);
                 // Generate a verification link
                 sendVerification();
                 navigate("/generate-verification-link")
