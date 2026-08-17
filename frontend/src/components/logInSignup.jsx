@@ -2,6 +2,7 @@ import { useState } from "react";
 import {generate_verification_link, login, signup} from "../services/authService"
 import {useProfile, useVerification} from "../app/store"
 import { useNavigate } from "react-router";
+import {toast} from "react-toastify"
 const LoginSignUp = ({ isLogin = true }) => {
     const [loginMode, setLoginMode] = useState(isLogin);
     const setUser = useProfile((state)=>state.setUser);
@@ -21,27 +22,39 @@ const LoginSignUp = ({ isLogin = true }) => {
 
     const handleSubmit =  (e) => {
         e.preventDefault();
-
+        
         if (loginMode) {
             console.log("Login:", formData);
-            login(formData).then((data)=>{ setUser(data); navigate("/")}).catch((e)=>console.log(e));
+            login(formData).then((data)=>{ 
+                setUser(data); navigate("/");
+                toast.success( "User loggedin successfully");
+            }).catch((e)=>{console.log(e.response.data);
+                toast.error(e.response?.data?.message || "Login failed");
+            }
+            
+        );
             
         } else {
             console.log("Signup:", formData);
             signup(formData).then((data)=> {
                 setUser(data);
                 // Generate a verification link
+                toast.success("User signup successfully");
                 sendVerification();
                 navigate("/generate-verification-link")
                 
-            }).catch((e)=>console.log(e));
+            }).catch((e)=>{console.log(e);
+                console.log(e.response?.data?.message)
+                toast.error(e.response?.data?.message || "Signup failed");
+
+            });
             
         }
     };
 
     return (
-        <div className="min-h-screen flex items-center justify-center bg-black text-white">
-            <div className="w-full max-w-md bg-gray-900 p-8 rounded-xl shadow-lg">
+        <div className="min-h-screen flex items-center justify-center bg-zinc-950 text-white">
+            <div className="w-full max-w-md bg-zinc-900 shadow-2xl p-8 rounded-xl border border-zinc-700">
 
                 <h1 className="text-3xl font-bold mb-6">
                     {loginMode ? "Login" : "Create Account"}
@@ -57,6 +70,7 @@ const LoginSignUp = ({ isLogin = true }) => {
                             value={formData.username}
                             onChange={handleChange}
                             className="w-full p-3 rounded bg-gray-800 outline-none"
+                            minLength={1}
                         />
                     )}
 
@@ -67,6 +81,7 @@ const LoginSignUp = ({ isLogin = true }) => {
                         value={formData.email}
                         onChange={handleChange}
                         className="w-full p-3 rounded bg-gray-800 outline-none"
+                        minLength={1}
                     />
 
                     <input
@@ -76,6 +91,7 @@ const LoginSignUp = ({ isLogin = true }) => {
                         value={formData.password}
                         onChange={handleChange}
                         className="w-full p-3 rounded bg-gray-800 outline-none"
+                        minLength={6}
                     />
 
                     <button

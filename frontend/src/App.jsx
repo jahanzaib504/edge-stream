@@ -4,6 +4,7 @@ import { useProfile } from "./app/store"
 import SideBar from "./components/sidebar"
 import api from "./api/axios";
 import { setToken } from "./utils/tokenManagment";
+import {ToastContainer} from "react-toastify"
 const App = () => {
     const fetchUser = useProfile((state) => state.fetchUser);
     // Fetch user at the start
@@ -43,6 +44,7 @@ const App = () => {
     return (
         <>
             <Router />
+            <ToastContainer />
         </>
     )
 }

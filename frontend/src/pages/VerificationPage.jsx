@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { useSearchParams, useNavigate } from "react-router";
+import { useSearchParams, useNavigate, replace } from "react-router";
 import api from "../api/axios";
 
 const VerificationPage = () => {
@@ -121,7 +121,7 @@ const VerificationPage = () => {
                 {/* Button */}
                 {success && (
                     <button
-                        onClick={() => navigate("/login")}
+                        onClick={() => navigate("/login", {replace:true})}
                         className="mt-8 w-full rounded-lg bg-white px-4 py-3 font-semibold text-zinc-900 transition hover:bg-zinc-200 active:scale-[0.98]"
                     >
                         Continue to Login
@@ -130,7 +130,7 @@ const VerificationPage = () => {
 
                 {!success && (
                     <button
-                        onClick={() => navigate("/signup")}
+                        onClick={() => navigate("/signup", {replace:true})}
                         className="mt-8 w-full rounded-lg border border-zinc-700 bg-zinc-800 px-4 py-3 font-semibold text-white transition hover:bg-zinc-700 active:scale-[0.98]"
                     >
                         Back to Sign Up

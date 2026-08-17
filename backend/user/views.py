@@ -14,6 +14,8 @@ from decouple import config
 from .utils.email_service import send_email
 from rest_framework.request import Request
 from datetime import timedelta
+from django.contrib.auth import authenticate
+
 signer = TimestampSigner()
 
 def generate_verification_link(user_id):
@@ -106,29 +108,55 @@ def verify_email(request:Request):
         return Response("Invalid or expired link.", status=400)
     
     
-@api_view(['POST'])
+from django.contrib.auth import authenticate
+from rest_framework.decorators import api_view
+from rest_framework.response import Response
+from rest_framework import status
+
+@api_view(["POST"])
 def login_user(request):
     serializer = LoginSerializer(data=request.data)
 
+    # Validate request data
     if not serializer.is_valid():
+        return Response({"errors": serializer.errors}, status=status.HTTP_400_BAD_REQUEST)
+
+    email = serializer.validated_data["email"]
+    password = serializer.validated_data["password"]
+
+    # Authenticate outside serializer
+    user = authenticate(
+        username=email,
+        password=password
+    )
+
+    if user is None:
         return Response(
-            {"message": serializer.errors},
-            status=400
+            {"message": "Invalid email or password"},
+            status=status.HTTP_400_BAD_REQUEST
         )
 
-    user = serializer.validated_data['user']
-    
+    # Check verification
+    if not user.is_verified:
+        return Response(
+            {
+                "message": "User is not verified. Complete the sign up process"
+            },
+            status=status.HTTP_403_FORBIDDEN
+        )
+
+    # Serialize user
     user_data = UserSerializer(user).data
-    if not user_data.get('is_verified'):
-        return Response({"message": "Complete the sign up process"}, status=status.HTTP_403_FORBIDDEN)
-    
+
+    # Generate tokens
     tokens = get_token_user(user)
+
     return Response(
         {
             "tokens": tokens,
-            "user": user_data
+            "user": user_data,
         },
-        status=200
+        status=status.HTTP_200_OK
     )
 
 @api_view(["POST"])
