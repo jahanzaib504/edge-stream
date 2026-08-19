@@ -3,7 +3,7 @@ def send_email(email, link):
     message = f"""Please click the Link below to verify your email. 
         {link}
         
-        Note: This link will expire automatically in 2 minutes
+        Note: This link will expire automatically after 1 day
     """
     print("Sending verification email")
     send_mail(subject="Email Verification Edge-Stream", 
