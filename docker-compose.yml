@@ -8,6 +8,8 @@ services:
       - postgres
     env_file:
       - .env
+    ports:
+      - "8000:8000"
     volumes:
       - ./staticfiles: /app/staticfiles # Bind mount
 
@@ -21,12 +23,6 @@ services:
       - 5432
     volumes:
       - postgres_data:/var/lib/postgresql/data
-
-  nginx:
-    build: /nginx   # Build from nginx folder
-    ports:
-      - "80:80"
-    depends_on:
-      - backend    
+   
 volumes:
   postgres_data:
