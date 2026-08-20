@@ -1,0 +1,42 @@
+name: Deploy to AWS EC2
+
+on:
+  push: ["main"]
+
+env:
+  SECRET_KEY: ${{ secrets.SECRET_KEY }}
+  DEBUG: True
+
+  DATABASE_NAME: ${{ secrets.DATABASE_NAME }}
+  DATABASE_USER: ${{ secrets.DATABASE_USER }}
+  DATABASE_PASSWORD: ${{ secrets.DATABASE_PASSWORD }}
+  DATABASE_HOST: ${{ secrets.DATABASE_HOST }}
+  DATABASE_PORT: ${{ secrets.DATABASE_PORT }}
+
+  AWS_STORAGE_BUCKET_NAME: ${{ vars.AWS_STORAGE_BUCKET_NAME }}
+  AWS_S3_REGION_NAME: ${{ vars.AWS_S3_REGION_NAME }}
+
+  EMAIL_BACKEND: ${{ secrets.EMAIL_BACKEND }}
+  EMAIL_HOST: ${{ secrets.EMAIL_HOST }}
+  EMAIL_PORT: ${{ secrets.EMAIL_PORT }}
+  EMAIL_USE_TLS: ${{ secrets.EMAIL_USE_TLS }}
+
+  EMAIL_HOST_USER: ${{ secrets.EMAIL_HOST_USER }}
+  EMAIL_HOST_PASSWORD: ${{ secrets.EMAIL_HOST_PASSWORD }}
+  DEFAULT_FROM_EMAIL: ${{ secrets.DEFAULT_FROM_EMAIL }}
+
+  FRONT_END_DOMAIN: ${{ vars.FRONT_END_DOMAIN }}
+
+permissions:
+  content: read
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Test
+        run: echo "GitHub Actions is working!"
