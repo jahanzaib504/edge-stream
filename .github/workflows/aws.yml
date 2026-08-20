@@ -22,12 +22,14 @@ env:
   EMAIL_HOST: ${{ vars.EMAIL_HOST }}
   EMAIL_PORT: ${{ vars.EMAIL_PORT }}
   EMAIL_USE_TLS: ${{ vars.EMAIL_USE_TLS }}
-
   EMAIL_HOST_USER: ${{ vars.EMAIL_HOST_USER }}
   EMAIL_HOST_PASSWORD: ${{ secrets.EMAIL_HOST_PASSWORD }}
   DEFAULT_FROM_EMAIL: ${{ vars.DEFAULT_FROM_EMAIL }}
 
   FRONT_END_DOMAIN: ${{ vars.FRONT_END_DOMAIN }}
+
+  EC2_SSH_KEY: ${{ secrets.EC2_SSH_KEY }}
+  EC2_IP: ${{ vars.EC2_IP }}
 
 jobs:
   deploy:
@@ -40,3 +42,36 @@ jobs:
 
       - name: Test
         run: echo "GitHub Actions is working!"
+
+      - name: Deploy to EC2
+        run: |
+          echo "$EC2_SSH_KEY" > ec2-key.pem
+          chmod 600 ec2-key.pem
+
+          ssh -o StrictHostKeyChecking=no -i ec2-key.pem ubuntu@"$EC2_IP" << 'EOF'
+            set -e
+
+            cd /home/ubuntu/edge-stream
+
+            echo "Pulling latest code..."
+            git pull origin main
+
+            echo "Building frontend..."
+            cd frontend
+            npm run build
+
+            echo "Copying frontend files..."
+            sudo rm -rf /var/www/frontend/*
+            sudo cp -r dist/* /var/www/frontend/
+
+            echo "Building and starting Docker containers..."
+            cd ..
+            docker compose up -d --build
+
+            echo "Reloading Nginx..."
+            sudo systemctl reload nginx
+
+            echo "Deployment completed successfully!"
+          EOF
+
+          rm -f ec2-key.pem
