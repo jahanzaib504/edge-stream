@@ -42,12 +42,15 @@ jobs:
 
       - name: Test
         run: echo "GitHub Actions is working!"
+      
+      - name: Write pem file
+        run: |
+          echo "${{ secrets.MY_PEM_KEY }}" > private_key.pem
+          chmod 600 private_key.pem
+
 
       - name: Deploy to EC2
-        run: |
-          echo "$EC2_SSH_KEY" > ec2-key.pem
-          chmod 600 ec2-key.pem
-
+        run: 
           ssh -o StrictHostKeyChecking=no -i ec2-key.pem ubuntu@"$EC2_IP" << 'EOF'
             set -e
 
