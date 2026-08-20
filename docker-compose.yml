@@ -6,6 +6,8 @@ services:
     restart: always
     depends_on:
       - postgres
+    volumes:
+      - ./staticfiles: /app/staticfiles # Bind mount
 
   postgres:
     image: postgres:16
