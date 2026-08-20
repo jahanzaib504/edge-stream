@@ -14,8 +14,6 @@ python manage.py makemigrations
 # Run migrations
 python manage.py migrate
 
-# Collect static files (optional)
-python manage.py collectstatic --noinput
 
 echo "Starting server..."
 
