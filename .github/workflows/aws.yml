@@ -27,8 +27,6 @@ env:
 
   FRONT_END_DOMAIN: ${{ vars.FRONT_END_DOMAIN }}
 
-permissions:
-  content: read
 
 jobs:
   deploy:
