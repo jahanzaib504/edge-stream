@@ -1,4 +1,0 @@
-FROM nginx:latest
-WORKDIR /root
-COPY nginx.conf /etc/nginx/nginx.conf
-COPY dist/ /var/www/frontend

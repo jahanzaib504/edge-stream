@@ -5,36 +5,14 @@ on:
     branches:
       - main
 
-env:
-  SECRET_KEY: ${{ secrets.SECRET_KEY }}
-  DEBUG: "True"
-
-  DATABASE_NAME: ${{ vars.DATABASE_NAME }}
-  DATABASE_USER: ${{ vars.DATABASE_USER }}
-  DATABASE_PASSWORD: ${{ secrets.DATABASE_PASSWORD }}
-  DATABASE_HOST: ${{ vars.DATABASE_HOST }}
-  DATABASE_PORT: ${{ vars.DATABASE_PORT }}
-
-  AWS_STORAGE_BUCKET_NAME: ${{ vars.AWS_STORAGE_BUCKET_NAME }}
-  AWS_S3_REGION_NAME: ${{ vars.AWS_S3_REGION_NAME }}
-
-  EMAIL_BACKEND: ${{ vars.EMAIL_BACKEND }}
-  EMAIL_HOST: ${{ vars.EMAIL_HOST }}
-  EMAIL_PORT: ${{ vars.EMAIL_PORT }}
-  EMAIL_USE_TLS: ${{ vars.EMAIL_USE_TLS }}
-  EMAIL_HOST_USER: ${{ vars.EMAIL_HOST_USER }}
-  EMAIL_HOST_PASSWORD: ${{ secrets.EMAIL_HOST_PASSWORD }}
-  DEFAULT_FROM_EMAIL: ${{ vars.DEFAULT_FROM_EMAIL }}
-
-  FRONT_END_DOMAIN: ${{ vars.FRONT_END_DOMAIN }}
-
-  EC2_SSH_SECRET_KEY: ${{ secrets.EC2_SSH_SECRET_KEY }}
-  EC2_IP: ${{ vars.EC2_IP }}
-
 jobs:
   deploy:
     runs-on: ubuntu-latest
     environment: production
+
+    env:
+      EC2_IP: ${{ vars.EC2_IP }}
+      EC2_SSH_SECRET_KEY: ${{ secrets.EC2_SSH_SECRET_KEY }}
 
     steps:
       - name: Checkout repository
@@ -53,11 +31,59 @@ jobs:
           ssh-keygen -y -f private_key.pem > /dev/null
           echo "SSH key is valid"
 
-      - name: Deploy to EC2
+      - name: Test SSH connection
         run: |
           ssh -o StrictHostKeyChecking=no \
             -i private_key.pem \
-            ubuntu@"$EC2_IP" << 'EOF'
+            ubuntu@"$EC2_IP" \
+            "echo SSH connection successful"
+
+      - name: Deploy to EC2
+        env:
+          SECRET_KEY: ${{ secrets.SECRET_KEY }}
+          DEBUG: "False"
+
+          DATABASE_NAME: ${{ vars.DATABASE_NAME }}
+          DATABASE_USER: ${{ vars.DATABASE_USER }}
+          DATABASE_PASSWORD: ${{ secrets.DATABASE_PASSWORD }}
+          DATABASE_HOST: ${{ vars.DATABASE_HOST }}
+          DATABASE_PORT: ${{ vars.DATABASE_PORT }}
+
+          AWS_STORAGE_BUCKET_NAME: ${{ vars.AWS_STORAGE_BUCKET_NAME }}
+          AWS_S3_REGION_NAME: ${{ vars.AWS_S3_REGION_NAME }}
+
+          EMAIL_BACKEND: ${{ vars.EMAIL_BACKEND }}
+          EMAIL_HOST: ${{ vars.EMAIL_HOST }}
+          EMAIL_PORT: ${{ vars.EMAIL_PORT }}
+          EMAIL_USE_TLS: ${{ vars.EMAIL_USE_TLS }}
+          EMAIL_HOST_USER: ${{ vars.EMAIL_HOST_USER }}
+          EMAIL_HOST_PASSWORD: ${{ secrets.EMAIL_HOST_PASSWORD }}
+          DEFAULT_FROM_EMAIL: ${{ vars.DEFAULT_FROM_EMAIL }}
+
+          FRONT_END_DOMAIN: ${{ vars.FRONT_END_DOMAIN }}
+
+        run: |
+          ssh -o StrictHostKeyChecking=no \
+            -i private_key.pem \
+            ubuntu@"$EC2_IP" \
+            "SECRET_KEY='$SECRET_KEY' \
+             DEBUG='$DEBUG' \
+             DATABASE_NAME='$DATABASE_NAME' \
+             DATABASE_USER='$DATABASE_USER' \
+             DATABASE_PASSWORD='$DATABASE_PASSWORD' \
+             DATABASE_HOST='$DATABASE_HOST' \
+             DATABASE_PORT='$DATABASE_PORT' \
+             AWS_STORAGE_BUCKET_NAME='$AWS_STORAGE_BUCKET_NAME' \
+             AWS_S3_REGION_NAME='$AWS_S3_REGION_NAME' \
+             EMAIL_BACKEND='$EMAIL_BACKEND' \
+             EMAIL_HOST='$EMAIL_HOST' \
+             EMAIL_PORT='$EMAIL_PORT' \
+             EMAIL_USE_TLS='$EMAIL_USE_TLS' \
+             EMAIL_HOST_USER='$EMAIL_HOST_USER' \
+             EMAIL_HOST_PASSWORD='$EMAIL_HOST_PASSWORD' \
+             DEFAULT_FROM_EMAIL='$DEFAULT_FROM_EMAIL' \
+             FRONT_END_DOMAIN='$FRONT_END_DOMAIN' \
+             bash -s" << 'REMOTE_SCRIPT'
 
             set -e
 
@@ -74,8 +100,37 @@ jobs:
             sudo rm -rf /var/www/html/*
             sudo cp -r dist/* /var/www/html/
 
+            cd /home/ubuntu/edge-stream
+
+            echo "Creating .env file..."
+
+            cat > .env << ENVEOF
+          SECRET_KEY=${SECRET_KEY}
+          DEBUG=${DEBUG}
+
+          DATABASE_NAME=${DATABASE_NAME}
+          DATABASE_USER=${DATABASE_USER}
+          DATABASE_PASSWORD=${DATABASE_PASSWORD}
+          DATABASE_HOST=${DATABASE_HOST}
+          DATABASE_PORT=${DATABASE_PORT}
+
+          AWS_STORAGE_BUCKET_NAME=${AWS_STORAGE_BUCKET_NAME}
+          AWS_S3_REGION_NAME=${AWS_S3_REGION_NAME}
+
+          EMAIL_BACKEND=${EMAIL_BACKEND}
+          EMAIL_HOST=${EMAIL_HOST}
+          EMAIL_PORT=${EMAIL_PORT}
+          EMAIL_USE_TLS=${EMAIL_USE_TLS}
+          EMAIL_HOST_USER=${EMAIL_HOST_USER}
+          EMAIL_HOST_PASSWORD=${EMAIL_HOST_PASSWORD}
+          DEFAULT_FROM_EMAIL=${DEFAULT_FROM_EMAIL}
+
+          FRONT_END_DOMAIN=${FRONT_END_DOMAIN}
+          ENVEOF
+
+            chmod 600 .env
+
             echo "Building and starting Docker containers..."
-            cd ..
             docker compose up -d --build
 
             echo "Reloading Nginx..."
@@ -83,7 +138,7 @@ jobs:
 
             echo "Deployment completed successfully!"
 
-          EOF
+          REMOTE_SCRIPT
 
       - name: Remove SSH key
         if: always()
