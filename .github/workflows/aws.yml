@@ -28,7 +28,7 @@ env:
 
   FRONT_END_DOMAIN: ${{ vars.FRONT_END_DOMAIN }}
 
-  EC2_SSH_KEY: ${{ secrets.EC2_SSH_KEY }}
+  EC2_SSH_SECRET_KEY: ${{ secrets.EC2_SSH_SECRET_KEY }}
   EC2_IP: ${{ vars.EC2_IP }}
 
 jobs:
@@ -43,10 +43,15 @@ jobs:
       - name: Test
         run: echo "GitHub Actions is working!"
 
-      - name: Write SSH key
+      - name: Decode SSH key
         run: |
-          printf '%s\n' "$EC2_SSH_KEY" | tr -d '\r' > private_key.pem
+          printf '%s' "$EC2_SSH_SECRET_KEY" | base64 --decode > private_key.pem
           chmod 600 private_key.pem
+
+      - name: Verify SSH key
+        run: |
+          ssh-keygen -y -f private_key.pem > /dev/null
+          echo "SSH key is valid"
 
       - name: Deploy to EC2
         run: |
