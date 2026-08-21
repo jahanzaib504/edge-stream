@@ -166,10 +166,3 @@ STATICFILES_DIRS = [
 ]
 
 STATIC_ROOT = BASE_DIR / "staticfiles" # Collect all static files and put them into staticfiles folder
-
-# Testing database connection
-try:
-    connection.ensure_connection()
-    print("✅ Database connected successfully")
-except Exception as e:
-    print("❌ Database connection failed:", e)
