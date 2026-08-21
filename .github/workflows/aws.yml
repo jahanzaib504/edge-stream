@@ -150,6 +150,9 @@ jobs:
             echo "Copying backend static files"
             sudo cp -r staticfiles /var/www/html/
 
+            echo "Changing permissions"
+            sudo chmod 755 /var/www/html/staticfiles/
+
             echo "Reloading Nginx..."
             sudo systemctl reload nginx
 
