@@ -166,3 +166,4 @@ STATICFILES_DIRS = [
 ]
 
 STATIC_ROOT = BASE_DIR / "staticfiles" # Collect all static files and put them into staticfiles folder
+FORCE_SCRIPT_NAME = "/backend"
