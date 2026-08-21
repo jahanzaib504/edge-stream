@@ -167,3 +167,7 @@ STATICFILES_DIRS = [
 
 STATIC_ROOT = BASE_DIR / "staticfiles" # Collect all static files and put them into staticfiles folder
 FORCE_SCRIPT_NAME = "/backend"
+CSRF_TRUSTED_ORIGINS = [
+    "https://edge-stream.awanlabs.space",
+    "https://*.awanlabs.space",  # wildcard subdomain support (Django 4.0+)
+]

@@ -8,6 +8,7 @@ django-cors-headers==4.9.0
 django-storages==1.14.6
 djangorestframework==3.17.1
 djangorestframework_simplejwt==5.5.1
+gunicorn==26.1.0
 ImageIO==2.37.4
 imageio-ffmpeg==0.6.0
 jmespath==1.1.0
