@@ -10,7 +10,7 @@ done
 
 echo "Database is ready."
 
-python manage.py makemigrations
+
 # Run migrations
 python manage.py migrate
 
