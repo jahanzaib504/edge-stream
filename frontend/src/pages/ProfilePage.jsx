@@ -14,19 +14,19 @@ const ConfirmPopup = ({ isOpen, onConfirm, onCancel }) => {
         <AnimatePresence>
             {isOpen && (
                 <motion.div
-                    className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm"
+                    className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm px-4"
                     initial={{ opacity: 0 }}
                     animate={{ opacity: 1 }}
                     exit={{ opacity: 0 }}
                 >
                     <motion.div
-                        className="w-full max-w-md rounded-2xl border border-zinc-700 bg-zinc-900 p-6 shadow-2xl"
+                        className="w-full max-w-md rounded-2xl border border-zinc-700 bg-zinc-900 p-5 sm:p-6 shadow-2xl"
                         initial={{ opacity: 0, scale: 0.9, y: 20 }}
                         animate={{ opacity: 1, scale: 1, y: 0 }}
                         exit={{ opacity: 0, scale: 0.9, y: 20 }}
                         transition={{ duration: 0.2 }}
                     >
-                        <h2 className="text-xl font-semibold text-zinc-100">
+                        <h2 className="text-lg sm:text-xl font-semibold text-zinc-100">
                             Are you sure you want to delete your account?
                         </h2>
 
@@ -34,17 +34,17 @@ const ConfirmPopup = ({ isOpen, onConfirm, onCancel }) => {
                             This action cannot be undone.
                         </p>
 
-                        <div className="mt-6 flex justify-end gap-3">
+                        <div className="mt-6 flex flex-col-reverse gap-3 sm:flex-row sm:justify-end">
                             <button
                                 onClick={onCancel}
-                                className="rounded-lg bg-zinc-800 px-4 py-2 text-sm font-medium text-zinc-300 transition hover:bg-zinc-700"
+                                className="w-full sm:w-auto rounded-lg bg-zinc-800 px-4 py-2 text-sm font-medium text-zinc-300 transition hover:bg-zinc-700"
                             >
                                 Cancel
                             </button>
 
                             <button
                                 onClick={onConfirm}
-                                className="rounded-lg bg-red-600 px-4 py-2 text-sm font-medium text-white transition hover:bg-red-500"
+                                className="w-full sm:w-auto rounded-lg bg-red-600 px-4 py-2 text-sm font-medium text-white transition hover:bg-red-500"
                             >
                                 Confirm
                             </button>
@@ -87,8 +87,9 @@ const Field = ({
                     rounded-xl
                     border border-zinc-700
                     bg-zinc-800
-                    px-4
-                    py-3
+                    px-3.5 py-2.5
+                    sm:px-4 sm:py-3
+                    text-sm sm:text-base
                     text-zinc-100
                     placeholder:text-zinc-500
                     outline-none
@@ -136,7 +137,7 @@ export const ProfilePage = () => {
     };
 
     const handleSave = async () => {
-        if(submit || isDeleting)
+        if (submit || isDeleting)
             return;
 
         if (data.password != data.confirmPassword) {
@@ -148,77 +149,78 @@ export const ProfilePage = () => {
         }
         catch (e) {
             console.log(e);
-        }finally{
+        } finally {
             setSubmit(false);
             setOpen(false);
         }
     }
-    const handleDeleteAccount = async() => {
-        if(submit || isDeleting)
+    const handleDeleteAccount = async () => {
+        if (submit || isDeleting)
             return;
 
-        try{
+        try {
             setDeleting(true);
             await delete_profile();
-        }catch(e){
+        } catch (e) {
             console.log(e);
         }
-        finally{
+        finally {
             setDeleting(false);
         }
     }
     return (
-        <div className="min-h-screen bg-zinc-900 px-6 py-10">
-            <div className="mx-auto max-w-3xl">
-                <div className="rounded-2xl border border-zinc-800 bg-zinc-900 p-8 shadow-xl">
-                    <h1 className="mb-8 text-3xl font-bold text-zinc-100">
-                        Profile
-                    </h1>
 
-                    <div className="space-y-6">
-                        <Field
-                            id="username"
-                            placeholder="e.g John Doe"
-                            value={data.username}
-                            handleChange={handleChange}
-                            label="Username"
-                            error={errors.username}
-                        />
+        <div className="mx-auto w-full max-w-3xl px-4 sm:px-6">
+            <div className="rounded-2xl border border-zinc-800 bg-zinc-900 p-5 sm:p-8 shadow-xl mt-6">
+                <h1 className="mb-6 sm:mb-8 text-xl sm:text-2xl lg:text-3xl font-bold text-zinc-100">
+                    Profile
+                </h1>
 
-                        <Field
-                            id="email"
-                            type="email"
-                            placeholder="e.g. john.doe@gmail.com"
-                            value={data.email}
-                            handleChange={handleChange}
-                            label="Email"
-                            error={errors.email}
-                            isDisabled={true}
-                        />
+                <div className="space-y-5 sm:space-y-6">
+                    <Field
+                        id="username"
+                        placeholder="e.g John Doe"
+                        value={data.username}
+                        handleChange={handleChange}
+                        label="Username"
+                        error={errors.username}
+                    />
 
-                        <Field
-                            id="password"
-                            type="password"
-                            placeholder="Password"
-                            value={data.password}
-                            handleChange={handleChange}
-                            label="Password"
-                            error={errors.password}
-                        />
+                    <Field
+                        id="email"
+                        type="email"
+                        placeholder="e.g. john.doe@gmail.com"
+                        value={data.email}
+                        handleChange={handleChange}
+                        label="Email"
+                        error={errors.email}
+                        isDisabled={true}
+                    />
 
-                        <Field
-                            id="confirmPassword"
-                            type="password"
-                            placeholder="Confirm Password"
-                            value={data.confirmPassword}
-                            handleChange={handleChange}
-                            label="Confirm Password"
-                            error={errors.confirmPassword}
-                        />
+                    <Field
+                        id="password"
+                        type="password"
+                        placeholder="Password"
+                        value={data.password}
+                        handleChange={handleChange}
+                        label="Password"
+                        error={errors.password}
+                    />
 
-                        <div className="pt-4">
-                            <button
-                                className="
+                    <Field
+                        id="confirmPassword"
+                        type="password"
+                        placeholder="Confirm Password"
+                        value={data.confirmPassword}
+                        handleChange={handleChange}
+                        label="Confirm Password"
+                        error={errors.confirmPassword}
+                    />
+
+                    <div className="pt-2 sm:pt-4">
+                        <button
+                            className="
+                                    w-full sm:w-auto
                                     rounded-xl
                                     bg-blue-600
                                     px-6
@@ -229,18 +231,19 @@ export const ProfilePage = () => {
                                     hover:bg-blue-500
                                     active:scale-95
                                 "
-                                onClick={handleSave}
-                                disabled={submit}
-                            >
-                                {submit?"Saving...":"Save Changes"}
-                            </button>
-                        </div>
+                            onClick={handleSave}
+                            disabled={submit}
+                        >
+                            {submit ? "Saving..." : "Save Changes"}
+                        </button>
                     </div>
                 </div>
+            </div>
 
-                <div className="rounded-2xl border border-zinc-800 bg-zinc-900 p-8 shadow-xl mt-4">
-                    <h2 className="mb-8 text-3xl font-bold text-zinc-100">Account Deletion</h2>
-                    <button className="
+            <div className="rounded-2xl border border-zinc-800 bg-zinc-900 p-5 sm:p-8 shadow-xl mt-4 mb-4">
+                <h2 className="mb-6 sm:mb-8 text-xl sm:text-2xl lg:text-3xl font-bold text-zinc-100">Account Deletion</h2>
+                <button className="
+                                    w-full sm:w-auto
                                     rounded-xl
                                     bg-red-600
                                     px-6
@@ -251,13 +254,13 @@ export const ProfilePage = () => {
                                     hover:bg-red-500
                                     active:scale-95
                                 "
-                        onClick={()=>setOpen(true)}
-                        disabled={isDeleting}
-                    >{isDeleting?"Deleteting...":"Delete Account"}</button>
-                </div>
-
-                <ConfirmPopup isOpen={isOpen} onConfirm={delete_profile} onCancel={()=>setOpen(false)}/>
+                    onClick={() => setOpen(true)}
+                    disabled={isDeleting}
+                >{isDeleting ? "Deleteting..." : "Delete Account"}</button>
             </div>
+
+            <ConfirmPopup isOpen={isOpen} onConfirm={delete_profile} onCancel={() => setOpen(false)} />
         </div>
+
     );
 };

@@ -11,3 +11,9 @@
 :root{
     --sidebar-width: 60px;
 }
+
+@media (max-width: 639px) {
+  :root {
+    --sidebar-width: 0px;
+  }
+}

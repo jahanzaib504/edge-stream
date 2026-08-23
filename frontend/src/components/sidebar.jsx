@@ -5,8 +5,8 @@ import { useEffect, useRef, useState } from "react"
 import { removeToken } from "../utils/tokenManagment"
 const SearchMenu = () => {
     return (
-        <div className="fixed top-7 left-[50%] translate-x-[-50%] bg-gray-900 rounded-4xl w-100">
-            <input className="text-xl px-5 py-3 text-white placeholder:text-gray-700 outline-none w-full" placeholder="Search" />
+        <div className="w-60 sm:w-lg fixed top-5 left-[50%] translate-x-[-50%] bg-gray-900 rounded-4xl border border-red-500">
+            <input className="text-sm px-3 py-2 sm:text-xl sm:px-5 sm:py-3 text-white placeholder:text-gray-700 outline-none w-full" placeholder="Search" />
         </div>)
 }
 const Button = ({ icon }) => (
@@ -32,12 +32,12 @@ const ProfileMenu = () => {
     const username = useProfile((state) => state.user?.username);
     const email = useProfile((state) => state.user?.email);
     const fetchUser = useProfile((state) => state.fetchUser);
-    const setUser = useProfile((state)=> state.setUser);
+    const setUser = useProfile((state) => state.setUser);
     const navigate = useNavigate();
     useEffect(() => {
 
     }, [])
-    const handleLogOut = ()=>{
+    const handleLogOut = () => {
         removeToken();
         setUser(null);
         localStorage.removeItem("refresh");
@@ -79,7 +79,7 @@ const ProfileMenu = () => {
 
             {/* Menu Items */}
             <div className="p-2">
-                <div className="flex w-full items-center rounded-lg px-3 py-2 text-sm transition hover:bg-zinc-800" onClick={()=>navigate("/profile")}>
+                <div className="flex w-full items-center rounded-lg px-3 py-2 text-sm transition hover:bg-zinc-800" onClick={() => navigate("/profile")}>
                     Profile
                 </div>
 
@@ -110,21 +110,27 @@ const SideBar = () => {
         document.addEventListener('mousedown', handleOutsideClickProf);
         return () => {
             document.removeEventListener('mousedown', handleOutsideClickProf);
-            
+
         }
     }, [open])
     return (
-        <div className="fixed z-9999 top-0 left-0 flex flex-col h-screen min-w-(--sidebar-width) w-min gap-3 items-center p-2 bg-zinc-950">
+        <div className="
+    fixed z-[9999]
+    bottom-0 left-0
+    flex w-full flex-row items-center justify-evenly gap-3
+    bg-zinc-950 p-2
+    sm:top-0 sm:h-screen sm:w-min
+    sm:flex-col sm:justify-start
+">
             <div onClick={() => setSearchOpen(!isSearchOpen)} ref={searchRef}>
                 <Button icon={<SearchIcon size={20} />} />
             </div>
             {isSearchOpen && <SearchMenu />}
             <Link to="/"><Button icon={<VideoIcon size={20} />} /></Link>
-            <div className="mt-auto relative" onClick={() => setOpen(!open)} ref={profRef}>
+            <div className="relative sm:mt-auto" onClick={() => setOpen(!open)} ref={profRef}>
                 <Button icon={<User2Icon />} size={20} />
                 {open && <ProfileMenu />}
             </div>
-
         </div>
     )
 }

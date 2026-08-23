@@ -54,9 +54,9 @@ const LoginSignUp = ({ isLogin = true }) => {
 
     return (
         <div className="min-h-screen flex items-center justify-center bg-zinc-950 text-white">
-            <div className="w-full max-w-md bg-zinc-900 shadow-2xl p-8 rounded-xl border border-zinc-700">
+            <div className="max-w-sm md:max-w-md lg:max-w-lg bg-zinc-900 shadow-2xl p-8 rounded-xl border border-zinc-700">
 
-                <h1 className="text-3xl font-bold mb-6">
+                <h1 className="text-xl md:text-2xl lg:text-3xl font-bold mb-6">
                     {loginMode ? "Login" : "Create Account"}
                 </h1>
 
