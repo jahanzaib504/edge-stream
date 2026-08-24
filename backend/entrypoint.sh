@@ -2,8 +2,8 @@
 
 echo "Container starting..."
 
-# Wait for database
-until nc -z postgres 5432; do
+# Wait for Aurora PostgreSQL
+until nc -z "$DATABASE_HOST" "$DATABASE_PORT"; do
     echo "Waiting for PostgreSQL..."
     sleep 1
 done
