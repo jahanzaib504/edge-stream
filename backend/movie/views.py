@@ -6,11 +6,12 @@ from rest_framework.response import Response
 from rest_framework import status
 from django.shortcuts import get_object_or_404
 from django.db.models import F, Avg
-
-from .models import MovieModel, MovieClick, MovieRating, WatchSession
-from .serializers import MovieSerializer, WatchSessionSerializer
-
-
+import boto3
+from .models import MovieModel, MovieClick, MovieRating, WatchSession, Genre
+from .serializers import MovieSerializer, WatchSessionSerializer, GenreSerializer
+from decouple import config
+import uuid
+import mimetypes
 class MovieView(APIView):
     permission_classes = [IsAuthenticated]
 
@@ -201,3 +202,59 @@ def get_recommendations(request):
 
     return Response(recommendations)
 
+@api_view(["GET"])
+@permission_classes([IsAuthenticated])
+def get_genres(request):
+    genres = Genre.objects.all()
+    serializer = GenreSerializer(genres, many=True)
+    return Response(serializer.data)
+
+
+
+
+CONTENT_TYPE_MAP = {
+    "poster": None,   # will infer from filename below, or hardcode to e.g. image/png
+    "video": "video/mp4",
+}
+
+@api_view(["GET"])
+@permission_classes([IsAdminUser])
+def get_presigned_url(request: Request):
+    filename = request.query_params.get("filename")
+    filetype = request.query_params.get("filetype")
+
+    if not filename or not filetype:
+        return Response("Filename and filetype is required", status=status.HTTP_400_BAD_REQUEST)
+    if filetype not in ("poster", "video"):
+        return Response("Only poster and video types are allowed", status=status.HTTP_400_BAD_REQUEST)
+
+    file_key = f"{filetype}s/{uuid.uuid4()}_{filename}"
+
+    # Infer content type
+    guessed_type, _ = mimetypes.guess_type(filename)
+    if filetype == "video":
+        content_type = "video/mp4"
+    else:
+        content_type = guessed_type if guessed_type in ("image/png", "image/jpeg", "image/webp") else "image/png"
+
+    try:
+        s3_client = boto3.client("s3",  region_name=config("AWS_S3_REGION_NAME"))
+
+        presigned_url = s3_client.generate_presigned_url(
+            "put_object",
+            Params={
+                "Bucket": config("AWS_STORAGE_BUCKET_NAME"),
+                "Key": file_key,
+                "ContentType": content_type,
+            },
+            ExpiresIn=3600,
+        )
+
+        return Response({
+            "presigned_url": presigned_url,
+            "key": file_key,
+            "content_type": content_type,   # send this back so frontend uses the exact same value
+        })
+
+    except Exception as e:
+        return Response({"error": str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)

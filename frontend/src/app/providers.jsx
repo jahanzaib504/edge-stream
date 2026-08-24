@@ -15,4 +15,14 @@ const AuthProvider = ({children}) =>{
 const NonProtectedRoute = ()=>{
     // cannot visit these pages user is verified
 }
-export {AuthProvider}
+const AdminUser = () =>{
+    const loading = useProfile((state)=> state.loading);
+    const is_superuser = useProfile((state)=> state.user?.is_superuser);
+    if (loading)
+        return <div>Loading...</div>
+    else if(!is_superuser)
+        return <Navigate to={"/"} replace/>;
+    
+    return <Outlet />
+}
+export {AuthProvider, AdminUser}

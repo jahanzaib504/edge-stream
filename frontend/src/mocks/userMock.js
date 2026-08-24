@@ -4,6 +4,7 @@ const userMock = {
     username: "Jahanzaib Arif",
     userId: "uuid-77jha7hjadsft76",
     email: "jahanzaib@gmail.com",
-    is_verified: true
+    is_verified: true,
+    is_superuser: true
 }
 export default userMock;

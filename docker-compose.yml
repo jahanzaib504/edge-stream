@@ -13,18 +13,18 @@ services:
     volumes:
       - ./staticfiles:/app/staticfiles # Bind mount
 
-  postgres:
-    image: postgres:16
-    container_name: postgres
-    restart: always
-    environment:
-      POSTGRES_DB: ${DATABASE_NAME}
-      POSTGRES_USER: ${DATABASE_USER}
-      POSTGRES_PASSWORD: ${DATABASE_PASSWORD}
-    expose:
-      - 5432
-    volumes:
-      - postgres_data:/var/lib/postgresql/data
+#   postgres:
+#     image: postgres:16
+#     container_name: postgres
+#     restart: always
+#     environment:
+#       POSTGRES_DB: ${DATABASE_NAME}
+#       POSTGRES_USER: ${DATABASE_USER}
+#       POSTGRES_PASSWORD: ${DATABASE_PASSWORD}
+#     expose:
+#       - 5432
+#     volumes:
+#       - postgres_data:/var/lib/postgresql/data
    
-volumes:
-  postgres_data:
+# volumes:
+#   postgres_data:
