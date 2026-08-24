@@ -4,8 +4,8 @@ services:
     build: ./backend
     container_name: backend
     restart: always
-    depends_on:
-      - postgres
+    # depends_on:
+    #   - postgres
     env_file:
       - .env
     ports:
