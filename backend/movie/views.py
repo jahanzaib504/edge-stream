@@ -24,7 +24,7 @@ class MovieView(APIView):
         serializer = MovieSerializer(movie)
         return Response(serializer.data)
 
-    def post(self, request: Request, movie_id):
+    def post(self, request: Request):
         # Only admins can create movies
         self.permission_classes = [IsAdminUser]
         self.check_permissions(request)

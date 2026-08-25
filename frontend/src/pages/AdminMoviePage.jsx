@@ -398,7 +398,7 @@ const AdminMoviePage = () => {
 
         try {
             setSubmitting(true)
-            await api.post("/movie/m/", movie)
+            await api.post("/movie", movie)
             toast.success("Movie created successfully")
             setMovie({
                 title: "",

@@ -7,5 +7,6 @@ urlpatterns = [
                path('click', movie_click), 
                path('rate', movie_rating),
                path('watch', watch_session),
+               path('', MovieView.as_view()),
                path('m/<str:movie_id>', MovieView.as_view()), 
                ]
