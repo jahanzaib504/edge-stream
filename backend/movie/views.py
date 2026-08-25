@@ -239,7 +239,10 @@ def get_presigned_url(request: Request):
         content_type = guessed_type if guessed_type in ("image/png", "image/jpeg", "image/webp") else "image/png"
 
     try:
-        s3_client = boto3.client("s3",  region_name=config("AWS_S3_REGION_NAME"))
+        s3_client = boto3.client("s3",  region_name=config("AWS_S3_REGION_NAME"), config=Config(
+                    signature_version="s3v4",           #  Required for IAM roles / STS credentials
+                    s3={"addressing_style": "virtual"}  #  Forces regional virtual-hosted URL
+                    ))
 
         presigned_url = s3_client.generate_presigned_url(
             "put_object",
@@ -248,10 +251,6 @@ def get_presigned_url(request: Request):
                 "Key": file_key,
                 "ContentType": content_type,
             },
-            config=Config(
-            signature_version="s3v4",           #  Required for IAM roles / STS credentials
-            s3={"addressing_style": "virtual"}  #  Forces regional virtual-hosted URL
-            ),
             ExpiresIn=3600,
         )
 
