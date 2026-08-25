@@ -12,7 +12,7 @@ RUN curl -fsSL https://truststore.pki.rds.amazonaws.com/global/global-bundle.pem
     -o /etc/ssl/certs/rds-global-bundle.pem
 
 # Changing read permissions
-RUN sudo chmod 644 /etc/ssl/certs/rds-global-bundle.pem    
+RUN chmod 644 /etc/ssl/certs/rds-global-bundle.pem    
 
 WORKDIR /app
 
