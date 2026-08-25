@@ -118,7 +118,7 @@ DATABASES = {
         "PORT": "5432",
         "OPTIONS": {
             "sslmode": "verify-full",
-            "sslrootcert": "system"
+            "sslrootcert": "/etc/ssl/certs/ca-certificates.crt"
         },
     }
 }
