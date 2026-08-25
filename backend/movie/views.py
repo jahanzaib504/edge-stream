@@ -7,6 +7,7 @@ from rest_framework import status
 from django.shortcuts import get_object_or_404
 from django.db.models import F, Avg
 import boto3
+from botocore.config import Config
 from .models import MovieModel, MovieClick, MovieRating, WatchSession, Genre
 from .serializers import MovieSerializer, WatchSessionSerializer, GenreSerializer
 from decouple import config
@@ -247,6 +248,10 @@ def get_presigned_url(request: Request):
                 "Key": file_key,
                 "ContentType": content_type,
             },
+            config=Config(
+            signature_version="s3v4",           #  Required for IAM roles / STS credentials
+            s3={"addressing_style": "virtual"}  #  Forces regional virtual-hosted URL
+            ),
             ExpiresIn=3600,
         )
 
