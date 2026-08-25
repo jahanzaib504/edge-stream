@@ -45,9 +45,9 @@ const Header = () => {
                     </h1>
 
                     <div className="flex flex-wrap gap-2">
-                        {hitMost?.genres?.map((genre) => (
+                        {hitMost?.genres?.map(({id, name}) => (
                             <span
-                                key={genre}
+                                key={id}
                                 className="
                             rounded-full
                             bg-white/15
@@ -57,7 +57,7 @@ const Header = () => {
                             sm:text-sm
                         "
                             >
-                                {genre}
+                                {name}
                             </span>
                         ))}
                     </div>
