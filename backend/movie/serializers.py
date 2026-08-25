@@ -21,6 +21,12 @@ class MovieSerializer(serializers.ModelSerializer):
     video_url = URLFieldCustom()
     poster_url = URLFieldCustom()
     genres = GenreSerializer(many=True, read_only=True)
+    genre_ids = serializers.PrimaryKeyRelatedField(
+        queryset=Genre.objects.all(),
+        many=True,
+        write_only=True,
+        source="genres",
+    )
     class Meta:
         model = MovieModel
         fields = "__all__"

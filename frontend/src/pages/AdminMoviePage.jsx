@@ -335,11 +335,11 @@ const AdminMoviePage = () => {
     const [movie, setMovie] = useState({
         title: "",
         description: "",
-        genres: [],
+        genre_ids: [],
         cast: [],
         duration: 0, // seconds
-        video_key: null,
-        poster_key: null,
+        video_url: null,
+        poster_url: null,
     })
 
     useEffect(() => {
@@ -367,27 +367,27 @@ const AdminMoviePage = () => {
 
     const toggleGenre = (genreId) => {
         setMovie((prev) => {
-            const exists = prev.genres.includes(genreId)
+            const exists = prev.genre_ids.includes(genreId)
             return {
                 ...prev,
-                genres: exists
-                    ? prev.genres.filter((g) => g !== genreId)
-                    : [...prev.genres, genreId],
+                genre_ids: exists
+                    ? prev.genre_ids.filter((g) => g !== genreId)
+                    : [...prev.genre_ids, genreId],
             }
         })
     }
 
-    const setVideoKey = (key) => setMovie((prev) => ({ ...prev, video_key: key }))
-    const setPosterKey = (key) => setMovie((prev) => ({ ...prev, poster_key: key }))
+    const setVideoKey = (key) => setMovie((prev) => ({ ...prev, video_url: key }))
+    const setPosterKey = (key) => setMovie((prev) => ({ ...prev, poster_url: key }))
 
     const validate = () => {
         const nextErrors = {}
         if (!movie.title.trim()) nextErrors.title = "Title is required"
         if (!movie.description.trim()) nextErrors.description = "Description is required"
-        if (movie.genres.length === 0) nextErrors.genres = "Select at least one genre"
+        if (movie.genre_ids.length === 0) nextErrors.genre_ids = "Select at least one genre"
         if (!movie.duration || movie.duration <= 0) nextErrors.duration = "Upload a video to calculate duration"
-        if (!movie.poster_key) nextErrors.poster = "Poster upload is required"
-        if (!movie.video_key) nextErrors.video = "Video upload is required"
+        if (!movie.poster_url) nextErrors.poster = "Poster upload is required"
+        if (!movie.video_url) nextErrors.video = "Video upload is required"
         setErrors(nextErrors)
         return Object.keys(nextErrors).length === 0
     }
@@ -398,16 +398,16 @@ const AdminMoviePage = () => {
 
         try {
             setSubmitting(true)
-            await api.post("/movie", movie)
+            await api.post("/movie/m/", movie)
             toast.success("Movie created successfully")
             setMovie({
                 title: "",
                 description: "",
-                genres: [],
+                genre_ids: [],
                 cast: [],
                 duration: 0,
-                video_key: null,
-                poster_key: null,
+                video_url: null,
+                poster_url: null,
             })
             setErrors({})
         } catch (e) {
@@ -446,7 +446,7 @@ const AdminMoviePage = () => {
                             id="duration"
                             type="number"
                             label="Duration (minutes)"
-                            value={movie.duration ? movie.duration / 60 : ""}
+                            value={movie.duration ? (movie.duration / 60).toFixed(1) : ""}
                             error={errors.duration}
                             disabled={true}
                         />
@@ -465,7 +465,7 @@ const AdminMoviePage = () => {
                         <span className="text-sm font-medium text-zinc-300">Genres</span>
                         <div className="flex flex-wrap gap-2">
                             {genres.map((genre) => {
-                                const active = movie.genres.includes(genre.id)
+                                const active = movie.genre_ids.includes(genre.id)
                                 return (
                                     <button
                                         type="button"
@@ -485,9 +485,9 @@ const AdminMoviePage = () => {
                                 )
                             })}
                         </div>
-                        {errors.genres && (
+                        {errors.genre_ids && (
                             <motion.div initial="initial" animate="shake" variants={shakeVariants}>
-                                <div className="text-sm text-red-500">* {errors.genres}</div>
+                                <div className="text-sm text-red-500">* {errors.genre_ids}</div>
                             </motion.div>
                         )}
                     </div>
