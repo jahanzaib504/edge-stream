@@ -20,9 +20,9 @@ class MovieModel(models.Model):
     )
 
     title = models.CharField(max_length=200)
-    poster_url = models.URLField(blank=True)
+    poster_url = models.CharField(blank=True)
     description = models.TextField()
-    video_url = models.URLField(blank=True)
+    video_url = models.CharField(blank=True)
 
     
     cast = models.JSONField(default=list, blank=True)

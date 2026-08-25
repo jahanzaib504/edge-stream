@@ -36,7 +36,7 @@ class MovieView(APIView):
             serializer.save()
         except Exception as e:
             return Response({"message": str(e)}, status=status.HTTP_400_BAD_REQUEST)
-        return Response(serializer.data, status=status.HTTP_201_CREATED)
+        return Response(status=status.HTTP_201_CREATED)
 
     def put(self, request: Request, movie_id):
         # Only admins can update movies

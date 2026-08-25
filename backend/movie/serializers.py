@@ -2,7 +2,7 @@ from rest_framework import serializers
 from .models import MovieModel, MovieClick, SearchHistory, WatchSession, MovieRating, Genre
 from django.core.files.storage import default_storage
 # This custom field appends s3 url when reading otherwise does not
-class URLFieldCustom(serializers.URLField):
+class CharFieldCustom(serializers.CharField):
     def to_representation(self, value):
         if not value:
             return None
@@ -18,8 +18,8 @@ class GenreSerializer(serializers.ModelSerializer):
         fields = ["id", "name"]
         
 class MovieSerializer(serializers.ModelSerializer):
-    video_url = URLFieldCustom()
-    poster_url = URLFieldCustom()
+    video_url = CharFieldCustom()
+    poster_url = CharFieldCustom()
     genres = GenreSerializer(many=True, read_only=True)
     genre_ids = serializers.PrimaryKeyRelatedField(
         queryset=Genre.objects.all(),
