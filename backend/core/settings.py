@@ -106,20 +106,20 @@ WSGI_APPLICATION = 'core.wsgi.application'
 # https://docs.djangoproject.com/en/6.0/ref/settings/#databases
 
 
-auth_token = boto3.client('rds', region_name='ap-southeast-1').generate_db_auth_token(DBHostname='database-1.cluster-craqk6g2qubg.ap-southeast-1.rds.amazonaws.com', Port=5432, DBUsername='postgres', Region='ap-southeast-1')
+
 
 DATABASES = {
     "default": {
-        "ENGINE": "django.db.backends.postgresql",
+        "ENGINE": "aurora_rds",
         "NAME": "postgres",
         "USER": "postgres",
-        "PASSWORD": auth_token,
         "HOST": "database-1.cluster-craqk6g2qubg.ap-southeast-1.rds.amazonaws.com",
         "PORT": "5432",
         "OPTIONS": {
             "sslmode": "verify-full",
             "sslrootcert": "/etc/ssl/certs/ca-certificates.crt"
         },
+        "CONN_MAX_AGE": 600, 
     }
 }
 
