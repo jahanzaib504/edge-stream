@@ -150,7 +150,7 @@ const FileUpload = ({ id, setKey, label, error = null, onFileSelected }) => {
 
         try {
             const { data } = await api.get("/movie/presigned_url", {
-                params: { filename: encodeURIComponent(selectedFile.name), filetype: encodeURIComponent(id) },
+                params: { filename: selectedFile.name, filetype: id },
             })
             const { presigned_url, key, content_type } = data
 
