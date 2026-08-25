@@ -118,7 +118,6 @@ DATABASES = {
         "PORT": "5432",
         "OPTIONS": {
             "sslmode": "verify-full",
-            "sslrootcert": "/etc/ssl/certs/rds-global-bundle.pem"
         },
     }
 }
