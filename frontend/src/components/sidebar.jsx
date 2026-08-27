@@ -30,9 +30,10 @@ const SearchMenu = () => {
                 setLoading(true);
 
                 const response = await api.get(
-                    `/movie/search/${encodeURIComponent(text.trim())}`,
+                    `/movie/search/`,
                     {
                         signal: controller.signal,
+                        params: {q: text.trim()}
                     }
                 );
 

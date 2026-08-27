@@ -147,14 +147,6 @@ jobs:
             echo "Building images..."
             sudo docker compose build
 
-            echo "Waiting for database..."
-            sudo docker compose run --rm -T backend sh -c '
-              until nc -z "$DATABASE_HOST" "$DATABASE_PORT"; do
-                echo "Waiting for PostgreSQL...";
-                sleep 1;
-              done;
-              echo "Database is ready."
-            '
 
             echo "Running migrations..."
             sudo docker compose run --rm -T backend python manage.py migrate --noinput

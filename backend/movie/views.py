@@ -267,7 +267,8 @@ def get_presigned_url(request: Request):
 # ------------------- Search ----------------
 @api_view(["GET"])
 @permission_classes([IsAuthenticated])
-def search_movies(request: Request, searched_text):
+def search_movies(request: Request):
+    searched_text = request.query_params.get("q")
     movies = MovieModel.objects.filter(
         title__icontains=searched_text
     )[:3]

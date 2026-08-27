@@ -8,6 +8,6 @@ urlpatterns = [
                path('rate', movie_rating),
                path('watch', watch_session),
                path('upload', MovieView.as_view()),
-               path('search/<str:searched_text>', search_movies),
+               path('search/', search_movies),
                path('m/<str:movie_id>', MovieView.as_view()), 
                ]
