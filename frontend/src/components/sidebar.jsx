@@ -1,5 +1,5 @@
 import { HomeIcon, VideoIcon, User2Icon, SearchIcon, Loader2 } from "lucide-react"
-import { Link, useNavigate } from "react-router"
+import { Link, useNavigate, useLocation } from "react-router"
 import { useProfile } from "../app/store"
 import { useEffect, useRef, useState } from "react"
 import { removeToken } from "../utils/tokenManagment"
@@ -15,7 +15,7 @@ const SearchMenu = () => {
     };
 
     useEffect(() => {
-        
+
         if (text.trim().length < 3) {
             setMovies([]);
             setLoading(false);
@@ -33,7 +33,7 @@ const SearchMenu = () => {
                     `/movie/search/`,
                     {
                         signal: controller.signal,
-                        params: {q: text.trim()}
+                        params: { q: text.trim() }
                     }
                 );
 
@@ -109,9 +109,9 @@ const SearchMenu = () => {
                     <div className="border-t border-zinc-700 p-2 sm:p-3">
                         <div className="flex max-h-[60vh] flex-col gap-1 overflow-y-auto">
                             {movies.map(({ id, poster_url, title }) => (
-                                <div
-                                    key={id}
-                                    className="
+                                <Link to={`/movie/${id}`} key={id}>
+                                    <div
+                                        className="
                                         flex
                                         cursor-pointer
                                         gap-3
@@ -122,11 +122,11 @@ const SearchMenu = () => {
                                         sm:gap-4
                                         sm:p-3
                                     "
-                                >
-                                    <img
-                                        src={poster_url}
-                                        alt={`${title} poster`}
-                                        className="
+                                    >
+                                        <img
+                                            src={poster_url}
+                                            alt={`${title} poster`}
+                                            className="
                                             h-14
                                             w-10
                                             shrink-0
@@ -135,14 +135,15 @@ const SearchMenu = () => {
                                             sm:h-20
                                             sm:w-14
                                         "
-                                    />
+                                        />
 
-                                    <div className="flex min-w-0 items-center">
-                                        <h2 className="truncate text-sm font-semibold sm:text-base">
-                                            {title}
-                                        </h2>
+                                        <div className="flex min-w-0 items-center">
+                                            <h2 className="truncate text-sm font-semibold sm:text-base">
+                                                {title}
+                                            </h2>
+                                        </div>
                                     </div>
-                                </div>
+                                </Link>
                             ))}
                         </div>
                     </div>
@@ -186,9 +187,7 @@ const ProfileMenu = () => {
     const fetchUser = useProfile((state) => state.fetchUser);
     const setUser = useProfile((state) => state.setUser);
     const navigate = useNavigate();
-    useEffect(() => {
 
-    }, [])
     const handleLogOut = () => {
         removeToken();
         setUser(null);
@@ -248,7 +247,13 @@ const SideBar = () => {
     const [open, setOpen] = useState(false);
     const [isSearchOpen, setSearchOpen] = useState(false);
     const profRef = useRef(null);
-    const searchRef = useRef(null)
+    const searchRef = useRef(null);
+    const location = useLocation()
+    useEffect(() => {
+        setSearchOpen(false);
+        setOpen(false);
+    }, [location.pathname]);
+
     useEffect(() => {
         function handleOutsideClickProf(e) {
             if (!profRef?.current?.contains(e.target))
@@ -260,11 +265,12 @@ const SideBar = () => {
         }
 
         document.addEventListener('mousedown', handleOutsideClickProf);
+        document.addEventListener('mousedown', handleOutsideClickSearch);
         return () => {
             document.removeEventListener('mousedown', handleOutsideClickProf);
-
+            document.removeEventListener('mousedown', handleOutsideClickSearch);
         }
-    }, [open])
+    })
     return (
         <div className="
     fixed z-[9999]
@@ -274,10 +280,16 @@ const SideBar = () => {
     sm:top-0 sm:h-screen sm:w-min
     sm:flex-col sm:justify-start
 ">
-            <div onClick={() => setSearchOpen(!isSearchOpen)} ref={searchRef}>
-                <Button icon={<SearchIcon size={20} />} />
+            <div
+                ref={searchRef}
+                className="relative"
+            >
+                <div onClick={() => setSearchOpen(!isSearchOpen)}>
+                    <Button icon={<SearchIcon size={20} />} />
+                </div>
+
+                {isSearchOpen && <SearchMenu />}
             </div>
-            {isSearchOpen && <SearchMenu />}
             <Link to="/"><Button icon={<VideoIcon size={20} />} /></Link>
             <div className="relative sm:mt-auto" onClick={() => setOpen(!open)} ref={profRef}>
                 <Button icon={<User2Icon />} size={20} />
