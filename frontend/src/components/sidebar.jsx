@@ -1,14 +1,165 @@
-import { HomeIcon, VideoIcon, User2Icon, SearchIcon } from "lucide-react"
+import { HomeIcon, VideoIcon, User2Icon, SearchIcon, Loader2 } from "lucide-react"
 import { Link, useNavigate } from "react-router"
 import { useProfile } from "../app/store"
 import { useEffect, useRef, useState } from "react"
 import { removeToken } from "../utils/tokenManagment"
+import { toast } from "react-toastify"
+import api from "../api/axios"
 const SearchMenu = () => {
+    const [text, setText] = useState("");
+    const [loading, setLoading] = useState(false);
+    const [movies, setMovies] = useState([]);
+
+    const handleChange = (e) => {
+        setText(e.target.value);
+    };
+
+    useEffect(() => {
+        
+        if (text.trim().length < 3) {
+            setMovies([]);
+            setLoading(false);
+            return;
+        }
+
+        const controller = new AbortController();
+
+        // Debounce: wait until the user stops typing
+        const timeout = setTimeout(async () => {
+            try {
+                setLoading(true);
+
+                const response = await api.get(
+                    `/movie/search/${encodeURIComponent(text.trim())}`,
+                    {
+                        signal: controller.signal,
+                    }
+                );
+
+                setMovies(response.data);
+            } catch (e) {
+                // Ignore cancelled requests
+                if (
+                    e.name !== "CanceledError" &&
+                    e.name !== "AbortError"
+                ) {
+                    toast.error(
+                        e.response?.data || "Failed to retrieve search data"
+                    );
+                }
+            } finally {
+                if (!controller.signal.aborted) {
+                    setLoading(false);
+                }
+            }
+        }, 500);
+
+        // Runs whenever text changes or component unmounts
+        return () => {
+            clearTimeout(timeout);
+            controller.abort();
+        };
+    }, [text]);
+
     return (
-        <div className="w-60 sm:w-lg fixed top-5 left-[50%] translate-x-[-50%] bg-gray-900 rounded-4xl border border-red-500">
-            <input className="text-sm px-3 py-2 sm:text-xl sm:px-5 sm:py-3 text-white placeholder:text-gray-700 outline-none w-full" placeholder="Search" />
-        </div>)
-}
+        <div className="fixed top-3 left-1/2 z-50 w-[calc(100%-1.5rem)] max-w-xl -translate-x-1/2 text-zinc-100 sm:top-5 sm:w-[calc(100%-2rem)]">
+
+            {/* Search container */}
+            <div className="overflow-hidden rounded-2xl border border-red-500/70 bg-zinc-800 shadow-xl sm:rounded-3xl">
+
+                {/* Input */}
+                <div className="relative flex items-center">
+                    <input
+                        type="text"
+                        placeholder="Search movies..."
+                        value={text}
+                        onChange={handleChange}
+                        className="
+                            w-full
+                            bg-transparent
+                            px-4 py-3
+                            pr-12
+                            text-base
+                            text-white
+                            outline-none
+                            placeholder:text-zinc-400
+                            sm:px-5 sm:py-4
+                            sm:text-lg
+                        "
+                    />
+
+                    {loading && (
+                        <Loader2
+                            size={20}
+                            className="absolute right-4 animate-spin text-red-500 sm:right-5"
+                        />
+                    )}
+                </div>
+
+                {/* Minimum characters message */}
+                {text.length > 0 && text.trim().length < 3 && (
+                    <div className="border-t border-zinc-700 px-4 py-2 text-xs text-zinc-400 sm:px-5 sm:text-sm">
+                        Please type at least 3 letters
+                    </div>
+                )}
+
+                {/* Search results */}
+                {movies.length > 0 && (
+                    <div className="border-t border-zinc-700 p-2 sm:p-3">
+                        <div className="flex max-h-[60vh] flex-col gap-1 overflow-y-auto">
+                            {movies.map(({ id, poster_url, title }) => (
+                                <div
+                                    key={id}
+                                    className="
+                                        flex
+                                        cursor-pointer
+                                        gap-3
+                                        rounded-xl
+                                        p-2
+                                        transition
+                                        hover:bg-zinc-700
+                                        sm:gap-4
+                                        sm:p-3
+                                    "
+                                >
+                                    <img
+                                        src={poster_url}
+                                        alt={`${title} poster`}
+                                        className="
+                                            h-14
+                                            w-10
+                                            shrink-0
+                                            rounded-md
+                                            object-cover
+                                            sm:h-20
+                                            sm:w-14
+                                        "
+                                    />
+
+                                    <div className="flex min-w-0 items-center">
+                                        <h2 className="truncate text-sm font-semibold sm:text-base">
+                                            {title}
+                                        </h2>
+                                    </div>
+                                </div>
+                            ))}
+                        </div>
+                    </div>
+                )}
+
+                {/* No results */}
+                {!loading &&
+                    text.trim().length >= 3 &&
+                    movies.length === 0 && (
+                        <div className="border-t border-zinc-700 px-4 py-4 text-center text-sm text-zinc-400">
+                            No movies found
+                        </div>
+                    )}
+            </div>
+        </div>
+    );
+};
+
 const Button = ({ icon }) => (
     <div className="
         flex

@@ -262,3 +262,16 @@ def get_presigned_url(request: Request):
 
     except Exception as e:
         return Response({"error": str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+    
+    
+# ------------------- Search ----------------
+@api_view(["GET"])
+@permission_classes([IsAuthenticated])
+def search_movies(request: Request, searched_text):
+    movies = MovieModel.objects.filter(
+        title__icontains=searched_text
+    )[:3]
+
+    serializer = MovieSerializer(movies, many=True)
+
+    return Response(serializer.data)

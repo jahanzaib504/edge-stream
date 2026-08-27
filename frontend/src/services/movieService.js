@@ -28,5 +28,4 @@ const register_click = async(movie_id)=>{
         console.log(e)
     }
 }
-
 export {get_recommendations, get_movie, register_click}

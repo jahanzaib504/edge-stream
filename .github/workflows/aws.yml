@@ -144,17 +144,55 @@ jobs:
             echo "Starting docker service"
             sudo systemctl start docker
 
-            echo "Building and starting Docker containers..."
-            sudo docker compose up -d --build
+            echo "Building images..."
+            sudo docker compose build
+
+            echo "Waiting for database..."
+            sudo docker compose run --rm backend sh -c '
+              until nc -z "$DATABASE_HOST" "$DATABASE_PORT"; do
+                echo "Waiting for PostgreSQL...";
+                sleep 1;
+              done;
+              echo "Database is ready."
+            '
+
+            echo "Running migrations..."
+            sudo docker compose run --rm backend python manage.py migrate --noinput
+
+            echo "Ensuring superuser exists..."
+            sudo docker compose run --rm backend python manage.py shell -c "
+          import os
+          from django.contrib.auth import get_user_model
+
+          User = get_user_model()
+
+          username = os.environ['DJANGO_SUPERUSER_USERNAME']
+          email = os.environ['DJANGO_SUPERUSER_EMAIL']
+          password = os.environ['DJANGO_SUPERUSER_PASSWORD']
+
+          if not User.objects.filter(username=username).exists():
+              User.objects.create_superuser(
+                  username=username,
+                  email=email,
+                  password=password,
+                  is_verified=True
+              )
+              print(f\"Superuser '{username}' created.\")
+          else:
+              print(f\"Superuser '{username}' already exists.\")
+          "
+
+            echo "Collecting static files..."
+            sudo docker compose run --rm backend python manage.py collectstatic --noinput
+
+            echo "Starting containers..."
+            sudo docker compose up -d
 
             echo "Prunig old images"
             sudo docker image prune -f
 
-            echo "Copying backend static files"
-            sudo cp -r staticfiles /var/www/html/
-
             echo "Changing permissions"
-            sudo chmod 755 /var/www/html/staticfiles/
+            sudo chmod 755 -R /var/www/html/staticfiles/
 
             echo "Reloading Nginx..."
             sudo systemctl reload nginx
