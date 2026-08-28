@@ -159,6 +159,7 @@ const MoviePage = () => {
                 grid
                 md:grid-cols-3
                 gap-8
+                mb-4
             ">
 
 

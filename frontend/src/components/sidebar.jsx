@@ -197,7 +197,8 @@ const ProfileMenu = () => {
         <div className="
                         absolute
                         bottom-14
-                        left-0
+                        right-0
+                        sm:left-0
                         w-72
                         rounded-2xl
                         border

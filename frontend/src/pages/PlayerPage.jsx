@@ -87,7 +87,7 @@ const PlayerPage = () => {
 
             {/* Video */}
 
-            <div className="flex-1 flex items-center justify-center bg-black">
+            <div className="flex-1 flex items-center justify-center bg-black mb-7">
 
                 <video
                     ref={videoRef}
