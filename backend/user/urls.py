@@ -15,6 +15,6 @@ urlpatterns = [
     path('test', test),
     path('generate-verification-link/', get_email_verification_link, name="generate-verification-link"),
     path('verify-email/', verify_email),
-    path('/delete', delete_user),
-    path('/update', update_profile)
+    path('delete', delete_user),
+    path('update', update_profile)
 ]

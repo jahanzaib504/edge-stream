@@ -151,6 +151,7 @@ export const ProfilePage = () => {
         }
         catch (e) {
             console.log(e);
+            toast.error("Error while updating profile");
         } finally {
             setSubmit(false);
             setOpen(false);
@@ -166,6 +167,7 @@ export const ProfilePage = () => {
             toast.success("User delete successfully");
         } catch (e) {
             console.log(e);
+            toast.error("Error while deleting user");
         }
         finally {
             setDeleting(false);
