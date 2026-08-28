@@ -175,3 +175,67 @@ def get_me(request):
     user = request.user
     serializer = UserSerializer(user)
     return Response(serializer.data)
+
+
+@api_view(["DELETE"])
+@permission_classes([IsAuthenticated])
+def delete_user(request):
+    try:
+        user = request.user
+        user.delete()
+
+        return Response(
+            {"message": "Account deleted successfully."},
+            status=status.HTTP_204_NO_CONTENT
+        )
+
+    except Exception:
+        return Response(
+            {"error": "Failed to delete account."},
+            status=status.HTTP_400_BAD_REQUEST
+        )
+
+
+@api_view(["PATCH"])
+@permission_classes([IsAuthenticated])
+def update_profile(request):
+    username = request.data.get("username")
+    password = request.data.get("password")
+
+    user = request.user
+
+    try:
+        if username is not None:
+            username = username.strip()
+
+            if not username:
+                return Response(
+                    {"message": "Username cannot be empty."},
+                    status=status.HTTP_400_BAD_REQUEST
+                )
+
+            user.username = username
+
+        if password is not None:
+            if len(password) < 6:
+                return Response(
+                    {"error": "Password must be at least 8 characters."},
+                    status=status.HTTP_400_BAD_REQUEST
+                )
+
+            user.set_password(password)
+
+        user.save()
+
+        return Response(
+            {
+                "message": "Profile updated successfully.",
+            },
+            status=status.HTTP_200_OK
+        )
+
+    except Exception:
+        return Response(
+            {"message": "Failed to update profile."},
+            status=status.HTTP_400_BAD_REQUEST
+        )

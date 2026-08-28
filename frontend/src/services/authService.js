@@ -44,13 +44,15 @@ const get_user = async ()=>{
 const delete_profile = async()=>{
     if(env.USE_MOCK)
         return true;
-    const request = await api.delete('/user');
+    const request = await api.delete('/user/delete');
+    return request.data;
 }
 const update_profile= async({username, password})=>{
     if(env.USE_MOCK)    
         return true;
 
-    const request = await api.patch('/user');
+    const request = await api.patch('/user/update');
+    return request.data;
 }
 const generate_verification_link = ()=>{
     const email = useProfile.getState().user?.email;

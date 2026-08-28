@@ -8,7 +8,7 @@ const shake = {
         duration: 0.4,
     },
 };
-
+import {toast} from "react-toastify"
 const ConfirmPopup = ({ isOpen, onConfirm, onCancel }) => {
     return (
         <AnimatePresence>
@@ -146,6 +146,8 @@ export const ProfilePage = () => {
         try {
             setSubmit(true);
             await update_profile({ data });
+            toast.success("Profile updated successfully");
+            setData({password:"", confirmPassword:""});
         }
         catch (e) {
             console.log(e);
@@ -161,6 +163,7 @@ export const ProfilePage = () => {
         try {
             setDeleting(true);
             await delete_profile();
+            toast.success("User delete successfully");
         } catch (e) {
             console.log(e);
         }
