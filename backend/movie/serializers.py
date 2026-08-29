@@ -6,7 +6,7 @@ class CharFieldCustom(serializers.CharField):
     def to_representation(self, value):
         if not value:
             return None
-        return default_storage.url(value)
+        return "https://cdn.awanlabs.space/" + value
 
     def to_internal_value(self, data):
         return super().to_internal_value(data)

@@ -57,7 +57,7 @@ const LoginSignUp = ({ isLogin = true }) => {
     };
 
     return (
-        <div className="min-h-screen flex-col items-center justify-center bg-zinc-950 text-white">
+        <div className="min-h-screen flex flex-col items-center justify-center bg-zinc-950 text-white">
             
             <div className="flex items-center gap-3 py-4 sm:py-5 mb-3">
                 <img
@@ -99,6 +99,7 @@ const LoginSignUp = ({ isLogin = true }) => {
                             onChange={handleChange}
                             className="w-full p-3 rounded bg-gray-800 outline-none"
                             minLength={1}
+                            required
                         />
                     )}
 
@@ -110,6 +111,7 @@ const LoginSignUp = ({ isLogin = true }) => {
                         onChange={handleChange}
                         className="w-full p-3 rounded bg-gray-800 outline-none"
                         minLength={1}
+                        required
                     />
 
                     <input
@@ -120,6 +122,7 @@ const LoginSignUp = ({ isLogin = true }) => {
                         onChange={handleChange}
                         className="w-full p-3 rounded bg-gray-800 outline-none"
                         minLength={6}
+                        required
                     />
 
                     <button
