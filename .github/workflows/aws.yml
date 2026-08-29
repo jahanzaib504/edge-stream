@@ -103,9 +103,6 @@ jobs:
             cd frontend
             npm run build
 
-            echo "Copying frontend files..."
-            sudo rm -rf /var/www/html/*
-            sudo cp -r dist/* /var/www/html/
 
             cd /home/ubuntu/edge-stream
 
@@ -147,17 +144,25 @@ jobs:
             echo "Building images..."
             sudo docker compose build
 
-
             echo "Running migrations..."
             sudo docker compose run --rm -T backend python manage.py migrate --noinput
 
             echo "Collecting static files..."
             sudo docker compose run --rm -T backend python manage.py collectstatic --noinput
 
+            echo "Stopping any existing containers to avoid name conflicts..."
+            sudo docker compose down --remove-orphans
+
             echo "Starting containers..."
             sudo docker compose up -d
 
-            echo "Prunig old images"
+            echo "Waiting a moment for containers to settle..."
+            sleep 3
+
+            echo "Current container status:"
+            sudo docker compose ps
+
+            echo "Pruning old images"
             sudo docker image prune -f
 
             echo "Changing permissions"
