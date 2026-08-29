@@ -1,12 +1,14 @@
 import { useState } from "react";
-import {generate_verification_link, login, signup} from "../services/authService"
-import {useProfile, useVerification} from "../app/store"
+import { generate_verification_link, login, signup } from "../services/authService"
+import { useProfile, useVerification } from "../app/store"
 import { useNavigate } from "react-router";
-import {toast} from "react-toastify"
+import { toast } from "react-toastify"
+import logo from "../assets/edge_stream_logo.png";
+
 const LoginSignUp = ({ isLogin = true }) => {
     const [loginMode, setLoginMode] = useState(isLogin);
-    const setUser = useProfile((state)=>state.setUser);
-    const sendVerification = useVerification((state)=>state.sendVerification);
+    const setUser = useProfile((state) => state.setUser);
+    const sendVerification = useVerification((state) => state.sendVerification);
     const [formData, setFormData] = useState({
         username: "",
         email: "",
@@ -20,40 +22,66 @@ const LoginSignUp = ({ isLogin = true }) => {
         });
     };
 
-    const handleSubmit =  (e) => {
+    const handleSubmit = (e) => {
         e.preventDefault();
-        
+
         if (loginMode) {
             console.log("Login:", formData);
-            login(formData).then((data)=>{ 
+            login(formData).then((data) => {
                 setUser(data); navigate("/");
-                toast.success( "User loggedin successfully");
-            }).catch((e)=>{console.log(e.response.data);
+                toast.success("User loggedin successfully");
+            }).catch((e) => {
+                console.log(e.response.data);
                 toast.error(e.response?.data?.message || "Login failed");
             }
-            
-        );
-            
+
+            );
+
         } else {
             console.log("Signup:", formData);
-            signup(formData).then((data)=> {
+            signup(formData).then((data) => {
                 setUser(data);
                 // Generate a verification link
                 toast.success("User signup successfully");
                 sendVerification();
                 navigate("/generate-verification-link")
-                
-            }).catch((e)=>{console.log(e);
+
+            }).catch((e) => {
+                console.log(e);
                 console.log(e.response?.data?.message)
                 toast.error(e.response?.data?.message || "Signup failed");
 
             });
-            
+
         }
     };
 
     return (
-        <div className="min-h-screen flex items-center justify-center bg-zinc-950 text-white">
+        <div className="min-h-screen flex-col items-center justify-center bg-zinc-950 text-white">
+            
+            <div className="flex items-center gap-3 py-4 sm:py-5 mb-3">
+                <img
+                    src={logo}
+                    alt="Edge Stream"
+                    className="
+                            h-10 w-10
+                            shrink-0
+                            rounded-xl
+                            object-contain
+                            sm:h-12 sm:w-12
+                        "
+                />
+
+                <div className="min-w-0">
+                    <h1 className="truncate text-xl font-bold tracking-tight text-white sm:text-2xl">
+                        Edge Stream
+                    </h1>
+                    <p className="hidden text-xs text-zinc-400 sm:block">
+                        Stream. Discover. Enjoy.
+                    </p>
+                </div>
+            </div>
+
             <div className="max-w-sm md:max-w-md lg:max-w-lg bg-zinc-900 shadow-2xl p-8 rounded-xl border border-zinc-700">
 
                 <h1 className="text-xl md:text-2xl lg:text-3xl font-bold mb-6">
@@ -105,8 +133,8 @@ const LoginSignUp = ({ isLogin = true }) => {
 
 
                 <p className="mt-5 text-gray-400 text-center">
-                    {loginMode 
-                        ? "Don't have an account?" 
+                    {loginMode
+                        ? "Don't have an account?"
                         : "Already have an account?"
                     }
 

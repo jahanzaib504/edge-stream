@@ -51,7 +51,7 @@ const update_profile= async({username, password})=>{
     if(env.USE_MOCK)    
         return true;
 
-    const request = await api.patch('/user/update');
+    const request = await api.patch('/user/update', {username, password});
     return request.data;
 }
 const generate_verification_link = ()=>{
